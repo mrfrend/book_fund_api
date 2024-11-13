@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "book-fund"
+version = "0.1.0"
+description = ""
+authors = ["Ivan <ideshchenko@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.4"
+pydantic = "^2.9.2"
+uvicorn = "^0.32.0"
+sqlalchemy = "^2.0.36"
+pydantic-settings = "^2.6.1"
+alembic = "^1.14.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
