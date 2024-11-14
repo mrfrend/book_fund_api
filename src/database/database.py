@@ -1,7 +1,7 @@
 from sqlalchemy import engine, create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
-
-engine = create_engine("sqlite:///book_fund.db", echo=True)
+from config import settings
+engine = create_engine(url=settings.db_url, echo=True)
 
 session_factory = sessionmaker(engine)
 
