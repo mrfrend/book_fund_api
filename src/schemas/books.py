@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from .editions import EditionDTO
 
 
 class LanguageAddDTO(BaseModel):
@@ -52,7 +53,7 @@ class CountryDTO(CountryAddDTO):
 class BookAddDTO(BaseModel):
     title: str = Field(max_length=40)
     keywords: str | None = None
-    year_realised: int = Field(gt=0, le=2024)
+    year_released: int = Field(gt=0, lt=2025)
     description: str = Field(max_length=500)
     country_id: int = Field(gt=0)
 
@@ -60,10 +61,18 @@ class BookAddDTO(BaseModel):
 class BookUpdateDTO(BaseModel):
     title: str | None = Field(max_length=40, default=None)
     keywords: str | None = None
-    year_realised: int | None = Field(gt=0, le=2024, default=None)
+    year_released: int | None = Field(gt=0, le=2024, default=None)
     description: str | None = Field(max_length=500, default=None)
     country_id: int | None = Field(gt=0, default=None)
 
 
 class BookDTO(BookAddDTO):
     id: int
+
+
+class BookRelDTO(BookDTO):
+    genres: list["GenreDTO"]
+    authors: list["AuthorDTO"]
+    catalogs: list["CatalogDTO"]
+    editions: list["EditionDTO"]
+    country: "CountryDTO"

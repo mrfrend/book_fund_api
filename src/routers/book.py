@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Path
 from repositories.book_repository import BookRepository
-from schemas.books import BookDTO, BookAddDTO, BookUpdateDTO
+from schemas.books import BookDTO, BookAddDTO, BookUpdateDTO, GenreAddDTO
 from dependacies import get_book_repository
 from typing import Annotated
 
@@ -22,9 +22,16 @@ def get_book(book_id: int, repo: book_dependency) -> BookDTO | None:
 
 
 @router.post("/", summary="Добавить книгу")
-def add_book(book: BookAddDTO, repo: book_dependency) -> BookDTO:
+def add_book(book: BookAddDTO, repo: book_dependency) -> BookAddDTO:
     book = repo.create(book)
     return book
+
+
+@router.post("/{book_id}", summary="Добавить книге жанр/жанры")
+def add_genre_to_book(
+    book_id: Annotated[int, Path(gt=0)], genres_id: list[int], repo: book_dependency
+):
+    pass
 
 
 @router.delete("/{book_id}", summary="Удалить книгу по id")

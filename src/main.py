@@ -10,7 +10,7 @@ def create_tables():
     Base.metadata.create_all(engine)
 
 
-app = FastAPI()
+app = FastAPI(title='Book fund API', summary='API библиотечного фонда')
 for router in routers:
     app.include_router(router)
 

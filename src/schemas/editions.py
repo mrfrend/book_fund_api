@@ -27,7 +27,7 @@ class EditionAddDTO(BaseModel):
             return value
         isbn_13_regex = r"^97[89]-\d{1,5}-\d{1,7}-\d{1,6}-\d$"
         if not re.match(isbn_13_regex, value):
-            raise ValidationError("Невалидный номер isbn")
+            raise ValidationError("Невалидный номер ISBN")
         return value
 
 

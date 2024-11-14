@@ -3,7 +3,20 @@ from sqlalchemy import String, Integer, CheckConstraint, ForeignKey
 from database.database import Base
 import enum
 
-__all__ = ["Book", "Language", "Genre", "Author", "Catalog", "Country"]
+__all__ = [
+    "Book",
+    "Language",
+    "Genre",
+    "Author",
+    "Catalog",
+    "Country",
+    "Edition",
+    "BookGenre",
+    "BookAuthor",
+    "BookCatalog",
+    "Publisher",
+    "Base"
+]
 
 
 class Language(Base):
@@ -56,7 +69,7 @@ class Book(Base):
     __tablename__ = "book"
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(40), nullable=False, unique=True)
-    keywords: Mapped[str] = mapped_column(String(70))
+    keywords: Mapped[str] = mapped_column(String(70), nullable=True)
     year_released: Mapped[int] = mapped_column(Integer, nullable=False)
     country_id: Mapped[int] = mapped_column(
         ForeignKey("country.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
@@ -82,7 +95,7 @@ class Book(Base):
 
     __table_args__ = (
         CheckConstraint(
-            (year_released > 0) & (year_released <= 2024), name="book_year_released_chk"
+            "year_realised > 0 AND year_realised <= 2024", name="book_year_released_chk"
         ),
     )
 
