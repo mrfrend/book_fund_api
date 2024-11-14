@@ -5,6 +5,7 @@ from repositories.genre_repository import GenreRepository
 from repositories.language_repository import LanguageRepository
 from repositories.publisher_repository import PublisherRepository
 from repositories.book_repository import BookRepository
+from repositories.edition_repository import EditionRepository
 
 
 def get_author_repository():
@@ -30,5 +31,10 @@ def get_language_repository():
 def get_publisher_repository():
     return PublisherRepository()
 
+
 def get_book_repository():
     return BookRepository()
+
+
+def get_edition_repository():
+    return EditionRepository()

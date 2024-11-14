@@ -5,6 +5,7 @@ from .genre import router as genre_router
 from .catalog import router as catalog_router
 from .publisher import router as publisher_router
 from .book import router as book_router
+from .edition import router as edition_router
 
 routers = [
     language_router,
@@ -12,6 +13,7 @@ routers = [
     country_router,
     genre_router,
     catalog_router,
-    publisher_router,
     book_router,
+    publisher_router,
+    edition_router,
 ]

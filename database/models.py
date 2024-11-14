@@ -10,9 +10,8 @@ class Language(Base):
     __tablename__ = "language"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
-
-    books: Mapped[list["Book"]] = relationship(
-        back_populates="languages", uselist=True, secondary="book_language"
+    editions: Mapped[list["Edition"]] = relationship(
+        back_populates="language", uselist=True
     )
 
 
@@ -64,9 +63,9 @@ class Book(Base):
     )
     description: Mapped[str] = mapped_column(String(500), nullable=False)
 
-    languages: Mapped[list["Language"]] = relationship(
-        back_populates="books", uselist=True, secondary="book_language"
-    )
+    # languages: Mapped[list["Language"]] = relationship(
+    #     back_populates="books", uselist=True, secondary="book_language"
+    # )
     catalogs: Mapped[list["Catalog"]] = relationship(
         back_populates="books", uselist=True, secondary="book_catalog"
     )
@@ -95,11 +94,11 @@ class BookCatalog(Base):
     catalog_id: Mapped[int] = mapped_column(ForeignKey("catalog.id"), nullable=False)
 
 
-class BookLanguage(Base):
-    __tablename__ = "book_language"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    book_id: Mapped[int] = mapped_column(ForeignKey("book.id"), nullable=False)
-    language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
+# class BookLanguage(Base):
+#     __tablename__ = "book_language"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     book_id: Mapped[int] = mapped_column(ForeignKey("book.id"), nullable=False)
+#     language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
 
 
 class BookAuthor(Base):
@@ -142,9 +141,12 @@ class Edition(Base):
     page_amount: Mapped[int] = mapped_column(Integer, nullable=False)
     status: Mapped[Status] = mapped_column(nullable=False)
     published_year: Mapped[int] = mapped_column(Integer, nullable=False)
-
+    language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
     book: Mapped["Book"] = relationship(back_populates="editions", uselist=False)
     publisher: Mapped["Publisher"] = relationship(
+        back_populates="editions", uselist=False
+    )
+    language: Mapped["Language"] = relationship(
         back_populates="editions", uselist=False
     )
     __table_args__ = (
@@ -153,7 +155,5 @@ class Edition(Base):
             (published_year > 0) & (published_year <= 2024),
             name="edition_published_year_chk",
         ),
-        CheckConstraint(
-            "isbn_number LIKE 'ISBN %-%-%-%'", name="edition_isbn_number_chk"
-        ),
+        CheckConstraint("isbn_number LIKE '%-%-%-%-%'", name="edition_isbn_number_chk"),
     )
