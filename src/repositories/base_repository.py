@@ -1,70 +1,45 @@
-from typing import Generic, TypeVar, List
+from typing import Generic, TypeVar
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from pydantic import BaseModel
 
 ModelType = TypeVar("ModelType")
-CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
-UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
-ReturnSchemaType = TypeVar("ReturnSchemaType", bound=BaseModel)
 
 
-class BaseRepository(
-    Generic[ModelType, CreateSchemaType, UpdateSchemaType, ReturnSchemaType]
-):
+class BaseRepository(Generic[ModelType]):
     def __init__(
         self,
         model: ModelType,
         db_session: Session,
-        return_dto: ReturnSchemaType,
-        create_dto: CreateSchemaType,
-        update_dto: UpdateSchemaType,
     ):
         self.model = model
         self.db_session: Session = db_session
-        self.return_dto = return_dto
-        self.create_dto = create_dto
-        self.update_dto = update_dto
 
-    def get_all(self) -> List[ReturnSchemaType]:
+    def get_all(self) -> list[ModelType] | list:
         with self.db_session() as session:
             query = select(self.model)
             result = session.execute(query).scalars().all()
-            result_dto = [
-                self.return_dto.model_validate(row, from_attributes=True)
-                for row in result
-            ]
-            return result_dto
+            return result
 
-    def get(self, id: int) -> None | ReturnSchemaType:
+    def get(self, id: int) -> None | ModelType:
         with self.db_session() as session:
             result = session.get(self.model, id)
-            if result:
-                result_dto = self.return_dto.model_validate(
-                    result, from_attributes=True
-                )
-                return result_dto
-            return None
+            return result
 
-    def create(self, data: CreateSchemaType) -> ReturnSchemaType:
+    def create(self, data) -> ModelType:
         with self.db_session() as session:
             result = self.model(**data.model_dump())
             session.add(result)
             session.commit()
             session.refresh(result)
-            result_dto = self.return_dto.model_validate(result, from_attributes=True)
-            return result_dto
+            return result
 
-    def delete(self, id: int) -> 1 | 0:
+    def delete(self, id: int) -> None:
         with self.db_session() as session:
             result = session.get(self.model, id)
-            if result:
-                session.delete(result)
-                session.commit()
-                return 1
-            return 0
+            session.delete(result)
+            session.commit()
 
-    def update(self, id: int, data: UpdateSchemaType) -> ReturnSchemaType | None:
+    def update(self, id: int, data) -> ModelType | None:
         with self.db_session() as session:
             result = session.get(self.model, id)
             if result:
@@ -72,8 +47,5 @@ class BaseRepository(
                     setattr(result, attr, value)
                 session.commit()
                 session.refresh(result)
-                result_dto = self.return_dto.model_validate(
-                    result, from_attributes=True
-                )
-                return result_dto
+                return result
             return None

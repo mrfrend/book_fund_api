@@ -1,35 +1,35 @@
 from fastapi import APIRouter, Depends, HTTPException
-from repositories.language_repository import LanguageRepository
+from services import LanguageService
 from schemas.books import LanguageDTO, LanguageAddDTO
-from dependacies import get_language_repository
+from dependacies import get_language_service
 from typing import Annotated
 
 router = APIRouter(prefix="/languages", tags=["Языки, Languages"])
-language_dependency = Annotated[LanguageRepository, Depends(get_language_repository)]
+language_dependency = Annotated[LanguageService, Depends(get_language_service)]
 
 
 @router.get("/", summary="Получить все языки, на которых написаны книги")
-def get_all_languages(repo: language_dependency) -> list[LanguageDTO]:
-    return repo.get_all()
+def get_all_languages(language_service: language_dependency) -> list[LanguageDTO]:
+    return language_service.get_all()
 
 
 @router.get("/{language_id}", summary="Получить язык по id")
-def get_language(language_id: int, repo: language_dependency) -> LanguageDTO | None:
-    language = repo.get(id=language_id)
+def get_language(language_id: int, language_service: language_dependency) -> LanguageDTO | None:
+    language = language_service.get(id=language_id)
     if language is None:
         raise HTTPException(status_code=404, detail="Язык не был найден")
     return language
 
 
 @router.post("/", summary="Добавить язык")
-def add_language(language: LanguageAddDTO, repo: language_dependency) -> LanguageDTO:
-    language = repo.create(language)
+def add_language(language: LanguageAddDTO, language_service: language_dependency) -> LanguageDTO:
+    language = language_service.create(language)
     return language
 
 
 @router.delete("/{language_id}", summary="Удалить язык по id")
-def delete_language(language_id: int, repo: language_dependency):
-    res = repo.delete(id=language_id)
+def delete_language(language_id: int, language_service: language_dependency):
+    res = language_service.delete(id=language_id)
     if res:
         return {"message": "Язык удален"}
     else:
@@ -38,9 +38,9 @@ def delete_language(language_id: int, repo: language_dependency):
 
 @router.patch("/{language_id}", summary="Обновить язык по id")
 def update_language(
-    language_id: int, language: LanguageAddDTO, repo: language_dependency
+    language_id: int, language: LanguageAddDTO, language_service: language_dependency
 ) -> LanguageDTO | None:
-    language = repo.update(id=language_id, data=language)
+    language = language_service.update(id=language_id, data=language)
     if language is None:
         raise HTTPException(status_code=404, detail="Язык не был найден")
     return language

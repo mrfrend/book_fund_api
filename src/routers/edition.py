@@ -1,35 +1,35 @@
 from fastapi import APIRouter, Depends, HTTPException
-from repositories.edition_repository import EditionRepository
+from services import EditionService
 from schemas.editions import EditionDTO, EditionAddDTO, EditionUpdateDTO
-from dependacies import get_edition_repository
+from dependacies import get_edition_service
 from typing import Annotated
 
 router = APIRouter(prefix="/editions", tags=["Издания, Editions"])
-edition_dependency = Annotated[EditionRepository, Depends(get_edition_repository)]
+edition_dependency = Annotated[EditionService, Depends(get_edition_service)]
 
 
 @router.get("/", summary="Получить все издания")
-def get_all_editions(repo: edition_dependency) -> list[EditionDTO]:
-    return repo.get_all()
+def get_all_editions(edition_service: edition_dependency) -> list[EditionDTO]:
+    return edition_service.get_all()
 
 
 @router.get("/{edition_id}", summary="Получить издание по id")
-def get_edition(edition_id: int, repo: edition_dependency) -> EditionDTO | None:
-    edition = repo.get(id=edition_id)
+def get_edition(edition_id: int, edition_service: edition_dependency) -> EditionDTO | None:
+    edition = edition_service.get(id=edition_id)
     if edition is None:
         raise HTTPException(status_code=404, detail="Издание не было найдено")
     return edition
 
 
 @router.post("/", summary="Добавить издание")
-def add_edition(edition: EditionAddDTO, repo: edition_dependency) -> EditionDTO:
-    edition = repo.create(edition)
+def add_edition(edition: EditionAddDTO, edition_service: edition_dependency) -> EditionDTO:
+    edition = edition_service.create(edition)
     return edition
 
 
 @router.delete("/{edition_id}", summary="Удалить издание по id")
-def delete_edition(edition_id: int, repo: edition_dependency):
-    res = repo.delete(id=edition_id)
+def delete_edition(edition_id: int, edition_service: edition_dependency):
+    res = edition_service.delete(id=edition_id)
     if res:
         return {"message": "Издание удалено"}
     else:
@@ -38,9 +38,9 @@ def delete_edition(edition_id: int, repo: edition_dependency):
 
 @router.patch("/{edition_id}", summary="Обновить издание по id")
 def update_edition(
-    edition_id: int, edition: EditionUpdateDTO, repo: edition_dependency
+    edition_id: int, edition: EditionUpdateDTO, edition_service: edition_dependency
 ) -> EditionDTO | None:
-    edition = repo.update(id=edition_id, data=edition)
+    edition = edition_service.update(id=edition_id, data=edition)
     if edition is None:
         raise HTTPException(status_code=404, detail="Издание не было найдено")
     return edition

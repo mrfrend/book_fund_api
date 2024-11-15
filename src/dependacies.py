@@ -1,40 +1,33 @@
-from repositories.author_repository import AuthorRepository
-from repositories.catalog_repository import CatalogRepository
-from repositories.country_repository import CountryRepository
-from repositories.genre_repository import GenreRepository
-from repositories.language_repository import LanguageRepository
-from repositories.publisher_repository import PublisherRepository
-from repositories.book_repository import BookRepository
-from repositories.edition_repository import EditionRepository
+from services import *
 
 
-def get_author_repository():
-    return AuthorRepository()
+def get_author_service():
+    return AuthorService()
 
 
-def get_catalog_repository():
-    return CatalogRepository()
+def get_catalog_service():
+    return CatalogService()
 
 
-def get_country_repository():
-    return CountryRepository()
+def get_country_service():
+    return CountryService()
 
 
-def get_genre_repository():
-    return GenreRepository()
+def get_genre_service():
+    return GenreService()
 
 
-def get_language_repository():
-    return LanguageRepository()
+def get_language_service():
+    return LanguageService()
 
 
-def get_publisher_repository():
-    return PublisherRepository()
+def get_publisher_service():
+    return PublisherService()
 
 
-def get_book_repository():
-    return BookRepository()
+def get_book_service():
+    return BookService()
 
 
-def get_edition_repository():
-    return EditionRepository()
+def get_edition_service():
+    return EditionService()

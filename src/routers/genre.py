@@ -1,35 +1,35 @@
 from fastapi import APIRouter, Depends, HTTPException
-from repositories.genre_repository import GenreRepository
+from services import GenreService
 from schemas.books import GenreDTO, GenreAddDTO
-from dependacies import get_genre_repository
+from dependacies import get_genre_service
 from typing import Annotated
 
 router = APIRouter(prefix="/genres", tags=["Жанры, Genres"])
-genre_dependency = Annotated[GenreRepository, Depends(get_genre_repository)]
+genre_dependency = Annotated[GenreService, Depends(get_genre_service)]
 
 
 @router.get("/", summary="Получить все жанры")
-def get_all_genres(repo: genre_dependency) -> list[GenreDTO]:
-    return repo.get_all()
+def get_all_genres(genre_service: genre_dependency) -> list[GenreDTO]:
+    return genre_service.get_all()
 
 
 @router.get("/{genre_id}", summary="Получить жанр по id")
-def get_genre(genre_id: int, repo: genre_dependency) -> GenreDTO | None:
-    genre = repo.get(id=genre_id)
+def get_genre(genre_id: int, genre_service: genre_dependency) -> GenreDTO | None:
+    genre = genre_service.get(id=genre_id)
     if genre is None:
         raise HTTPException(status_code=404, detail="Жанр не был найден")
     return genre
 
 
 @router.post("/", summary="Добавить жанр")
-def add_genre(genre: GenreAddDTO, repo: genre_dependency) -> GenreDTO:
-    genre = repo.create(genre)
+def add_genre(genre: GenreAddDTO, genre_service: genre_dependency) -> GenreDTO:
+    genre = genre_service.create(genre)
     return genre
 
 
 @router.delete("/{genre_id}", summary="Удалить жанр по id")
-def delete_genre(genre_id: int, repo: genre_dependency):
-    res = repo.delete(id=genre_id)
+def delete_genre(genre_id: int, genre_service: genre_dependency):
+    res = genre_service.delete(id=genre_id)
     if res:
         return {"message": "Жанр удален"}
     else:
@@ -38,9 +38,9 @@ def delete_genre(genre_id: int, repo: genre_dependency):
 
 @router.patch("/{genre_id}", summary="Обновить жанр по id")
 def update_genre(
-    genre_id: int, genre: GenreAddDTO, repo: genre_dependency
+    genre_id: int, genre: GenreAddDTO, genre_service: genre_dependency
 ) -> GenreDTO | None:
-    genre = repo.update(id=genre_id, data=genre)
+    genre = genre_service.update(id=genre_id, data=genre)
     if genre is None:
         raise HTTPException(status_code=404, detail="Жанр не был найден")
     return genre

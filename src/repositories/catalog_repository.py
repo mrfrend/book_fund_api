@@ -7,14 +7,9 @@ from database.database import session_factory
 from .base_repository import BaseRepository
 
 
-class CatalogRepository(
-    BaseRepository[Catalog, CatalogAddDTO, CatalogAddDTO, CatalogDTO]
-):
+class CatalogRepository(BaseRepository[Catalog]):
     def __init__(self):
         super().__init__(
             model=Catalog,
             db_session=session_factory,
-            return_dto=CatalogDTO,
-            create_dto=CatalogAddDTO,
-            update_dto=CatalogAddDTO,
         )

@@ -4,14 +4,9 @@ from database.database import session_factory
 from .base_repository import BaseRepository
 
 
-class AuthorRepository(
-    BaseRepository[Author, AuthorAddDTO, AuthorUpdateDTO, AuthorDTO]
-):
+class AuthorRepository(BaseRepository[Author]):
     def __init__(self):
         super().__init__(
             model=Author,
             db_session=session_factory,
-            return_dto=AuthorDTO,
-            create_dto=AuthorAddDTO,
-            update_dto=AuthorUpdateDTO,
         )
