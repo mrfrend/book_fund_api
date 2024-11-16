@@ -1,6 +1,6 @@
-from schemas.books import *
+from schemas.books_schema import *
 from database.models import Country
-from schemas.books import CountryDTO, CountryAddDTO
+from schemas.books_schema import CountryDTO, CountryAddDTO
 from database.database import session_factory
 from .base_repository import BaseRepository
 

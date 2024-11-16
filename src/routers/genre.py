@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import GenreService
-from schemas.books import GenreDTO, GenreAddDTO
+from schemas.books_schema import GenreDTO, GenreAddDTO, BookDTO
 from dependacies import get_genre_service
 from typing import Annotated
 
@@ -19,6 +19,14 @@ def get_genre(genre_id: int, genre_service: genre_dependency) -> GenreDTO | None
     if genre is None:
         raise HTTPException(status_code=404, detail="Жанр не был найден")
     return genre
+
+
+@router.get("/books/{genre_id}", summary="Получить книги по жанру")
+def get_books_by_genre(
+    genre_id: int, genre_service: genre_dependency
+) -> list[BookDTO]:
+    books = genre_service.get_books_by_genre_id(genre_id=genre_id)
+    return books
 
 
 @router.post("/", summary="Добавить жанр")

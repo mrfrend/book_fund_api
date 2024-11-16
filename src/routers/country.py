@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import CountryService
-from schemas.books import CountryDTO, CountryAddDTO
+from schemas.books_schema import CountryDTO, CountryAddDTO
 from dependacies import get_country_service
 from typing import Annotated
 

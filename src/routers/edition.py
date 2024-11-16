@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import EditionService
-from schemas.editions import EditionDTO, EditionAddDTO, EditionUpdateDTO
+from schemas.editions import EditionDTO, EditionAddDTO, EditionUpdateDTO, EditionRelDTO
 from dependacies import get_edition_service
 from typing import Annotated
 
@@ -9,12 +9,15 @@ edition_dependency = Annotated[EditionService, Depends(get_edition_service)]
 
 
 @router.get("/", summary="Получить все издания")
-def get_all_editions(edition_service: edition_dependency) -> list[EditionDTO]:
-    return edition_service.get_all()
+def get_all_editions(edition_service: edition_dependency) -> list[EditionRelDTO]:
+    editions = edition_service.get_all()
+    return editions
 
 
 @router.get("/{edition_id}", summary="Получить издание по id")
-def get_edition(edition_id: int, edition_service: edition_dependency) -> EditionDTO | None:
+def get_edition(
+    edition_id: int, edition_service: edition_dependency
+) -> EditionDTO | None:
     edition = edition_service.get(id=edition_id)
     if edition is None:
         raise HTTPException(status_code=404, detail="Издание не было найдено")
@@ -22,7 +25,9 @@ def get_edition(edition_id: int, edition_service: edition_dependency) -> Edition
 
 
 @router.post("/", summary="Добавить издание")
-def add_edition(edition: EditionAddDTO, edition_service: edition_dependency) -> EditionDTO:
+def add_edition(
+    edition: EditionAddDTO, edition_service: edition_dependency
+) -> EditionDTO:
     edition = edition_service.create(edition)
     return edition
 

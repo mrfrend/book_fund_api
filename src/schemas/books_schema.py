@@ -70,9 +70,31 @@ class BookDTO(BookAddDTO):
     id: int
 
 
-class BookRelDTO(BookDTO):
+class BookGenreDTO(BookDTO):
+    genres: list["GenreDTO"]
+
+
+class BookAuthorDTO(BookDTO):
+    authors: list["AuthorDTO"]
+
+
+class BookCatalogDTO(BookDTO):
+    catalogs: list["CatalogDTO"]
+
+
+class BookEditionDTO(BookDTO):
+    editions: list["EditionDTO"]
+
+
+class BookRelDTOFull(BookDTO):
     genres: list["GenreDTO"]
     authors: list["AuthorDTO"]
     catalogs: list["CatalogDTO"]
     editions: list["EditionDTO"]
+    country: "CountryDTO"
+
+class BookRelDTO(BookDTO):
+    genres: list["GenreDTO"]
+    authors: list["AuthorDTO"]
+    catalogs: list["CatalogDTO"]
     country: "CountryDTO"

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import AuthorService
-from schemas.books import AuthorDTO, AuthorAddDTO, AuthorUpdateDTO
+from schemas.books_schema import AuthorDTO, AuthorAddDTO, AuthorUpdateDTO, BookDTO
 from dependacies import get_author_service
 from typing import Annotated
 
@@ -11,6 +11,11 @@ author_dependency = Annotated[AuthorService, Depends(get_author_service)]
 @router.get("/", summary="Получить всех авторов")
 def get_all_authors(author_service: author_dependency) -> list[AuthorDTO]:
     return author_service.get_all()
+
+@router.get('/books/{author_id}', summary="Получить книги, написанные автором", response_model=list[BookDTO])
+def get_books_by_author(author_id: int, author_service: author_dependency):
+    books = author_service.get_books_by_author_id(author_id=author_id)
+    return books
 
 
 @router.get("/{author_id}", summary="Получить автора по id")

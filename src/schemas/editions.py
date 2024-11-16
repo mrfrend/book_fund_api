@@ -1,4 +1,6 @@
+from __future__ import annotations
 from pydantic import BaseModel, Field, field_validator, ValidationError
+# from schemas.books_schema import BookRelDTO, LanguageDTO
 from database.models import Status
 import re
 
@@ -33,6 +35,12 @@ class EditionAddDTO(BaseModel):
 
 class EditionDTO(EditionAddDTO):
     id: int = Field(gt=0)
+
+
+class EditionRelDTO(EditionDTO):
+    book: "BookRelDTO"
+    publisher: "PublisherDTO"
+    language: "LanguageDTO"
 
 
 class EditionUpdateDTO(EditionAddDTO):

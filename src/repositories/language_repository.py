@@ -1,6 +1,6 @@
-from schemas.books import *
+from schemas.books_schema import *
 from database.models import Language
-from schemas.books import LanguageDTO, LanguageAddDTO
+from schemas.books_schema import LanguageDTO, LanguageAddDTO
 from database.database import session_factory
 from .base_repository import BaseRepository
 
