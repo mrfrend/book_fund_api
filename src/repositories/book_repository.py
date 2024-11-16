@@ -24,6 +24,7 @@ class BookRepository(BaseRepository[Book]):
                 .options(selectinload(Book.editions))
                 .options(joinedload(Book.country))
             )
+            print(query)
             execution = session.execute(query)
             result = execution.unique().scalars().all()
             return result

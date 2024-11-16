@@ -15,7 +15,7 @@ __all__ = [
     "BookAuthor",
     "BookCatalog",
     "Publisher",
-    "Base"
+    "Base",
 ]
 
 
@@ -156,6 +156,7 @@ class Edition(Base):
     published_year: Mapped[int] = mapped_column(Integer, nullable=False)
     language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
     book: Mapped["Book"] = relationship(back_populates="editions", uselist=False)
+    instances_available: Mapped[int] = mapped_column(Integer, nullable=False)
     publisher: Mapped["Publisher"] = relationship(
         back_populates="editions", uselist=False
     )
@@ -169,4 +170,7 @@ class Edition(Base):
             name="edition_published_year_chk",
         ),
         CheckConstraint("isbn_number LIKE '%-%-%-%-%'", name="edition_isbn_number_chk"),
+        CheckConstraint(
+            instances_available >= 1, name="edition_instances_available_chk"
+        ),
     )

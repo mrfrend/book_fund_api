@@ -141,6 +141,9 @@ class EditionRelDTO(EditionDTO):
     publisher: "PublisherDTO"
     language: "LanguageDTO"
 
+    class Config:
+        orm_mode = True
+
 
 class EditionUpdateDTO(EditionAddDTO):
     publisher_id: int | None = Field(gt=0)

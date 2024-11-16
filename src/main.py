@@ -3,6 +3,7 @@ from database.database import Base, engine
 from database.models import *
 import uvicorn
 from routers import routers
+from repositories.edition_repository import EditionRepository
 
 
 def create_tables():
@@ -10,7 +11,7 @@ def create_tables():
     Base.metadata.create_all(engine)
 
 
-app = FastAPI(title='Book fund API', summary='API библиотечного фонда')
+app = FastAPI(title="Book fund API", summary="API библиотечного фонда")
 for router in routers:
     app.include_router(router)
 

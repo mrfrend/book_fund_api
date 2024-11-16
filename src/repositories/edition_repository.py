@@ -27,9 +27,19 @@ class EditionRepository(BaseRepository[Edition]):
                 .options(selectinload(Book.authors))
                 .options(selectinload(Book.catalogs))
                 .options(joinedload(Book.country))
-                .subquery("books")
+                .subquery("books_full_info")
             )
-            query = select(Edition).options(joinedload(Edition.book))
+            query = select(Book).options(
+                selectinload(Book.genres),
+                selectinload(Book.authors),
+                selectinload(Book.catalogs),
+                joinedload(Book.country),
+                joinedload(Book.editions).options(
+                    selectinload(Edition.publisher), joinedload(Edition.language)
+                ),
+            )
+
+            print(query)
 
             result = session.execute(query).unique().scalars().all()
             return result

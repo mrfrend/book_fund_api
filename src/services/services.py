@@ -80,7 +80,7 @@ class EditionService(BaseService[EditionDTO, EditionAddDTO, EditionUpdateDTO]):
     def __init__(self):
         super().__init__(EditionRepository, EditionDTO, EditionAddDTO, EditionUpdateDTO)
 
-    def get_all(self) -> list["EditionDTO"]:
+    def get_all(self) -> list[EditionRelDTO]:
         editions = self.repository.get_all()
         editions_rel_dto = [
             EditionRelDTO.model_validate(edition, from_attributes=True)
