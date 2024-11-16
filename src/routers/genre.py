@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import GenreService
-from schemas.books_schema import GenreDTO, GenreAddDTO, BookDTO
+from schemas.schemas import GenreDTO, GenreAddDTO, BookDTO
 from dependacies import get_genre_service
 from typing import Annotated
 

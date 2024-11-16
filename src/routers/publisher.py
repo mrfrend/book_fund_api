@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import PublisherService
-from schemas.editions import PublisherDTO, PublisherAddDTO
+from schemas.schemas import PublisherDTO, PublisherAddDTO
 from dependacies import get_publisher_service
 from typing import Annotated
 

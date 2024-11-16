@@ -1,6 +1,6 @@
 from repositories.base_repository import BaseRepository
 from database.models import Publisher
-from schemas.editions import PublisherDTO, PublisherAddDTO
+from schemas.schemas import PublisherDTO, PublisherAddDTO
 from repositories.base_repository import BaseRepository
 from database.database import session_factory
 

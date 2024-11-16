@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Path
 from services import BookService
-from schemas.books_schema import *
+from schemas.schemas import *
 from dependacies import get_book_service
 from typing import Annotated
 

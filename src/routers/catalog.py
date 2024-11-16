@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import CatalogService
-from schemas.books_schema import CatalogDTO, CatalogAddDTO
+from schemas.schemas import CatalogDTO, CatalogAddDTO
 from dependacies import get_catalog_service
 from typing import Annotated
 

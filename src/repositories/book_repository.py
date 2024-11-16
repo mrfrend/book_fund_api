@@ -1,9 +1,8 @@
 from typing import Union
-from schemas.books_schema import *
+from schemas.schemas import *
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload, joinedload
 from database.models import Book, Genre, Author, Catalog, Edition
-from schemas.books_schema import BookDTO, BookAddDTO, BookUpdateDTO
 from database.database import session_factory
 from .base_repository import BaseRepository
 

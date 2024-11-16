@@ -1,7 +1,7 @@
 from database.models import Author
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-from schemas.books_schema import AuthorDTO, AuthorAddDTO, AuthorUpdateDTO
+from schemas.schemas import AuthorDTO, AuthorAddDTO, AuthorUpdateDTO
 from database.database import session_factory
 from .base_repository import BaseRepository
 

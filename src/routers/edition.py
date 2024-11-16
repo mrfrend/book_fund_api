@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import EditionService
-from schemas.editions import EditionDTO, EditionAddDTO, EditionUpdateDTO, EditionRelDTO
+from schemas.schemas import EditionDTO, EditionAddDTO, EditionUpdateDTO, EditionRelDTO
 from dependacies import get_edition_service
 from typing import Annotated
 

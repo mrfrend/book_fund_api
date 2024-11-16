@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import AuthorService
-from schemas.books_schema import AuthorDTO, AuthorAddDTO, AuthorUpdateDTO, BookDTO
+from schemas.schemas import AuthorDTO, AuthorAddDTO, AuthorUpdateDTO, BookDTO
 from dependacies import get_author_service
 from typing import Annotated
 

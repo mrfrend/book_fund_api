@@ -1,8 +1,7 @@
-from schemas.books_schema import *
+from schemas.schemas import *
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from database.models import Genre, Book
-from schemas.books_schema import GenreDTO, GenreAddDTO
 from database.database import session_factory
 from .base_repository import BaseRepository
 

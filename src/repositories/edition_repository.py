@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload, joinedload
-from schemas.books_schema import *
+from schemas.schemas import *
 from database.models import Edition, Book
 from database.database import session_factory
 from .base_repository import BaseRepository
@@ -21,17 +21,15 @@ class EditionRepository(BaseRepository[Edition]):
 
     def get_all(self):
         with self.db_session() as session:
-            query = (
-                select(Edition)
-                .options(
-                    joinedload(Edition.book)
-                    .selectinload(Book.authors)
-                    .selectinload(Book.catalogs)
-                    .selectinload(Book.genres)
-                    .joinedload(Book.country)
-                )
-                .options(joinedload(Edition.publisher).joinedload(Edition.language))
+            subquery = (
+                select(Book)
+                .options(selectinload(Book.genres))
+                .options(selectinload(Book.authors))
+                .options(selectinload(Book.catalogs))
+                .options(joinedload(Book.country))
+                .subquery("books")
             )
+            query = select(Edition).options(joinedload(Edition.book))
 
             result = session.execute(query).unique().scalars().all()
             return result

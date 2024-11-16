@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import LanguageService
-from schemas.books_schema import LanguageDTO, LanguageAddDTO
+from schemas.schemas import LanguageDTO, LanguageAddDTO
 from dependacies import get_language_service
 from typing import Annotated
 
