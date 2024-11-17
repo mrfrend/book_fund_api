@@ -82,12 +82,11 @@ class EditionService(BaseService[EditionDTO, EditionAddDTO, EditionUpdateDTO]):
 
     def get_all(self) -> list[EditionRelDTO]:
         editions = self.repository.get_all()
-        editions_rel_dto = [
-            EditionRelDTO.model_validate(edition, from_attributes=True)
-            for edition in editions
-        ]
-        return editions_rel_dto
-
+        # editions_rel_dto = [
+        #     EditionRelDTO.model_validate(edition, from_attributes=True)
+        #     for edition in editions
+        # ]
+        return editions
 
 class GenreService(BaseService[GenreDTO, GenreAddDTO, GenreAddDTO]):
     def __init__(self):

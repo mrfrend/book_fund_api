@@ -19,27 +19,35 @@ class EditionRepository(BaseRepository[Edition]):
             result = session.execute(query).scalars().all()
             return result
 
+    def get(self, id: int):
+        with self.db_session() as session:
+            query = (
+                session.query(Edition)
+                .options(
+                    joinedload(Edition.book).selectinload(Book.genres),
+                    joinedload(Edition.book).selectinload(Book.authors),
+                    joinedload(Edition.book).joinedload(Book.country),
+                    joinedload(Edition.publisher),
+                    joinedload(Edition.language),
+                )
+                .where(Edition.id == id)
+            )
+            result = session.execute(query).scalar()
+            return EditionRelDTO.model_validate(result, from_attributes=True)
+
     def get_all(self):
         with self.db_session() as session:
-            subquery = (
-                select(Book)
-                .options(selectinload(Book.genres))
-                .options(selectinload(Book.authors))
-                .options(selectinload(Book.catalogs))
-                .options(joinedload(Book.country))
-                .subquery("books_full_info")
+            query = session.query(Edition).options(
+                joinedload(Edition.book).selectinload(Book.genres),
+                joinedload(Edition.book).selectinload(Book.authors),
+                joinedload(Edition.book).joinedload(Book.country),
+                joinedload(Edition.publisher),
+                joinedload(Edition.language),
             )
-            query = select(Book).options(
-                selectinload(Book.genres),
-                selectinload(Book.authors),
-                selectinload(Book.catalogs),
-                joinedload(Book.country),
-                joinedload(Book.editions).options(
-                    selectinload(Edition.publisher), joinedload(Edition.language)
-                ),
-            )
-
-            print(query)
 
             result = session.execute(query).unique().scalars().all()
-            return result
+            editions_rel_dto = [
+                EditionRelDTO.model_validate(row, from_attributes=True)
+                for row in result
+            ]
+            return editions_rel_dto

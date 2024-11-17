@@ -17,7 +17,7 @@ def get_all_editions(edition_service: edition_dependency) -> list[EditionRelDTO]
 @router.get("/{edition_id}", summary="Получить издание по id")
 def get_edition(
     edition_id: int, edition_service: edition_dependency
-) -> EditionDTO | None:
+) -> EditionRelDTO | None:
     edition = edition_service.get(id=edition_id)
     if edition is None:
         raise HTTPException(status_code=404, detail="Издание не было найдено")

@@ -2,6 +2,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field, ValidationError, field_validator
 from database.models import Status
 import re
+
 # from .editions import EditionDTO
 
 
@@ -140,9 +141,6 @@ class EditionRelDTO(EditionDTO):
     book: "BookRelDTO"
     publisher: "PublisherDTO"
     language: "LanguageDTO"
-
-    class Config:
-        orm_mode = True
 
 
 class EditionUpdateDTO(EditionAddDTO):
