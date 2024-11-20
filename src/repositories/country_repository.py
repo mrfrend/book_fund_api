@@ -1,4 +1,4 @@
-from schemas.schemas import *
+from schemas.undepended_schemas import *
 from database.models import Country
 from database.database import session_factory
 from .base_repository import BaseRepository

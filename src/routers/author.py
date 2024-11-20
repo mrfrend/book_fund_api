@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import AuthorService
-from schemas.schemas import AuthorDTO, AuthorAddDTO, AuthorUpdateDTO, BookDTO
-from services.dependacies import get_author_service
+from schemas import AuthorDTO, AuthorAddDTO, AuthorUpdateDTO, BookDTO
 from typing import Annotated
 from auth.dependancies import get_staff_user
 
 router = APIRouter(prefix="/authors", tags=["Авторы, Authors"])
-author_dependency = Annotated[AuthorService, Depends(get_author_service)]
+author_dependency = Annotated[AuthorService, Depends(AuthorService)]
 
 
 @router.get("/", summary="Получить всех авторов")

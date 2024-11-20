@@ -1,57 +1,30 @@
-from __future__ import annotations
-from pydantic import BaseModel, Field, ValidationError, field_validator
-from database.models import Status
+from pydantic import BaseModel, Field, field_validator, ValidationError
+from .undepended_schemas import (
+    GenreDTO,
+    AuthorDTO,
+    CatalogDTO,
+    CountryDTO,
+    Status,
+    PublisherDTO,
+    LanguageDTO,
+)
 import re
 
-# from .editions import EditionDTO
-
-
-class LanguageAddDTO(BaseModel):
-    name: str = Field(max_length=25)
-
-
-class LanguageDTO(LanguageAddDTO):
-    id: int
-
-
-class GenreAddDTO(BaseModel):
-    name: str = Field(max_length=30)
-
-
-class GenreDTO(GenreAddDTO):
-    id: int
-
-
-class AuthorAddDTO(BaseModel):
-    first_name: str = Field(max_length=25, default="Иван")
-    last_name: str = Field(max_length=50, default="Иванов")
-    middle_name: str | None = Field(max_length=50, default=None)
-
-
-class AuthorUpdateDTO(BaseModel):
-    first_name: str | None = Field(max_length=25, default="Иван")
-    last_name: str | None = Field(max_length=50, default="Иванов")
-    middle_name: str | None = Field(max_length=50, default=None)
-
-
-class AuthorDTO(AuthorAddDTO):
-    id: int
-
-
-class CatalogAddDTO(BaseModel):
-    name: str = Field(max_length=50)
-
-
-class CatalogDTO(CatalogAddDTO):
-    id: int
-
-
-class CountryAddDTO(BaseModel):
-    name: str
-
-
-class CountryDTO(CountryAddDTO):
-    id: int
+__all__ = [
+    "BookAddDTO",
+    "BookUpdateDTO",
+    "BookDTO",
+    "BookGenreDTO",
+    "BookAuthorDTO",
+    "BookCatalogDTO",
+    "BookEditionDTO",
+    "BookRelDTO",
+    "BookRelDTOFull",
+    "EditionAddDTO",
+    "EditionDTO",
+    "EditionUpdateDTO",
+    "EditionRelDTO",
+]
 
 
 class BookAddDTO(BaseModel):
@@ -103,14 +76,6 @@ class BookRelDTO(BookDTO):
     authors: list["AuthorDTO"]
     catalogs: list["CatalogDTO"]
     country: "CountryDTO"
-
-
-class PublisherAddDTO(BaseModel):
-    name: str
-
-
-class PublisherDTO(PublisherAddDTO):
-    id: int
 
 
 class EditionAddDTO(BaseModel):

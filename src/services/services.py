@@ -1,6 +1,6 @@
 from database.models import Genre
 from repositories import *
-from schemas.schemas import *
+from schemas import *
 from services.base_service import BaseService
 
 

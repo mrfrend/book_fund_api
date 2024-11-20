@@ -1,12 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import EditionService
-from schemas.schemas import EditionDTO, EditionAddDTO, EditionUpdateDTO, EditionRelDTO
-from services.dependacies import get_edition_service
+from schemas import (
+    EditionDTO,
+    EditionAddDTO,
+    EditionUpdateDTO,
+    EditionRelDTO,
+)
 from typing import Annotated
 from auth.dependancies import get_staff_user
-router = APIRouter(prefix="/editions", tags=["Издания, Editions"])
-edition_dependency = Annotated[EditionService, Depends(get_edition_service)]
 
+router = APIRouter(prefix="/editions", tags=["Издания, Editions"])
+edition_dependency = Annotated[EditionService, Depends(EditionService)]
 
 
 @router.get("/", summary="Получить все издания")

@@ -6,3 +6,4 @@ from .genre_repository import GenreRepository
 from .language_repository import LanguageRepository
 from .publisher_repository import PublisherRepository
 from .author_repository import AuthorRepository
+from .user_repository import UserRepository

@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import PublisherService
-from schemas.schemas import PublisherDTO, PublisherAddDTO
-from services.dependacies import get_publisher_service
+from schemas.undepended_schemas import PublisherDTO, PublisherAddDTO
 from typing import Annotated
 from auth.dependancies import get_staff_user
 
 router = APIRouter(prefix="/publishers", tags=["Издатели, Publishers"])
-publisher_dependency = Annotated[PublisherService, Depends(get_publisher_service)]
+publisher_dependency = Annotated[PublisherService, Depends(PublisherService)]
 
 
 @router.get("/", summary="Получить всех издателей")

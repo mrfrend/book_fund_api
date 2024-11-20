@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload, joinedload
-from schemas.schemas import *
+from schemas import EditionRelDTO
 from database.models import Edition, Book
 from database.database import session_factory
 from .base_repository import BaseRepository

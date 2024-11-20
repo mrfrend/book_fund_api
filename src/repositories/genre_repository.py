@@ -1,4 +1,4 @@
-from schemas.schemas import *
+from schemas.undepended_schemas import *
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from database.models import Genre, Book

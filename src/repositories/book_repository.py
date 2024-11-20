@@ -1,5 +1,5 @@
 from typing import Union
-from schemas.schemas import *
+from schemas.undepended_schemas import *
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload, joinedload
 from database.models import Book, Genre, Author, Catalog, Edition

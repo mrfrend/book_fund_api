@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import LanguageService
-from schemas.schemas import LanguageDTO, LanguageAddDTO
-from services.dependacies import get_language_service
+from schemas.undepended_schemas import LanguageDTO, LanguageAddDTO
 from typing import Annotated
 from auth.dependancies import get_staff_user
 
 router = APIRouter(prefix="/languages", tags=["Языки, Languages"])
-language_dependency = Annotated[LanguageService, Depends(get_language_service)]
+language_dependency = Annotated[LanguageService, Depends(LanguageService)]
 
 
 @router.get("/", summary="Получить все языки, на которых написаны книги")

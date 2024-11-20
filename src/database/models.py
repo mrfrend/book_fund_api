@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Integer, CheckConstraint, ForeignKey, text
 from database.database import Base
-import enum
+from schemas.undepended_schemas import Status
 
 __all__ = [
     "Book",
@@ -76,9 +76,6 @@ class Book(Base):
     )
     description: Mapped[str] = mapped_column(String(500), nullable=False)
 
-    # languages: Mapped[list["Language"]] = relationship(
-    #     back_populates="books", uselist=True, secondary="book_language"
-    # )
     catalogs: Mapped[list["Catalog"]] = relationship(
         back_populates="books", uselist=True, secondary="book_catalog"
     )
@@ -107,13 +104,6 @@ class BookCatalog(Base):
     catalog_id: Mapped[int] = mapped_column(ForeignKey("catalog.id"), nullable=False)
 
 
-# class BookLanguage(Base):
-#     __tablename__ = "book_language"
-#     id: Mapped[int] = mapped_column(primary_key=True)
-#     book_id: Mapped[int] = mapped_column(ForeignKey("book.id"), nullable=False)
-#     language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
-
-
 class BookAuthor(Base):
     __tablename__ = "book_author"
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -126,11 +116,6 @@ class BookGenre(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     book_id: Mapped[int] = mapped_column(ForeignKey("book.id"), nullable=False)
     genre_id: Mapped[int] = mapped_column(ForeignKey("genre.id"), nullable=False)
-
-
-class Status(enum.Enum):
-    available = "Доступно"
-    unavailable = "Недоступно"
 
 
 class Publisher(Base):

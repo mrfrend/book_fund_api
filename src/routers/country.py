@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import CountryService
-from schemas.schemas import CountryDTO, CountryAddDTO
-from services.dependacies import get_country_service
+from schemas.undepended_schemas import CountryDTO, CountryAddDTO
 from typing import Annotated
 from auth.dependancies import get_staff_user
 
 router = APIRouter(prefix="/countries", tags=["Страны, Countries"])
-country_dependency = Annotated[CountryService, Depends(get_country_service)]
+country_dependency = Annotated[CountryService, Depends(CountryService)]
 
 
 @router.get("/", summary="Получить все страны")

@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import CatalogService
-from schemas.schemas import CatalogDTO, CatalogAddDTO
-from services.dependacies import get_catalog_service
+from schemas.undepended_schemas import CatalogDTO, CatalogAddDTO
 from typing import Annotated
 from auth.dependancies import get_staff_user
 
 router = APIRouter(prefix="/catalogs", tags=["Каталоги, Catalogs"])
-catalog_dependency = Annotated[CatalogService, Depends(get_catalog_service)]
+catalog_dependency = Annotated[CatalogService, Depends(CatalogService)]
 
 
 @router.get("/", summary="Получить все каталоги")

@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Path
 from services import BookService
-from schemas.schemas import *
-from services.dependacies import get_book_service
+from schemas import BookRelDTO, BookDTO, BookAddDTO, BookGenreDTO, BookAuthorDTO, BookCatalogDTO, BookEditionDTO, BookUpdateDTO
 from typing import Annotated
 from auth.dependancies import get_staff_user
 
 router = APIRouter(prefix="/books", tags=["Книги, Books"])
-book_dependency = Annotated[BookService, Depends(get_book_service)]
+book_dependency = Annotated[BookService, Depends(BookService)]
 
 
 @router.get("/", summary="Получить все книги")

@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import GenreService
-from schemas.schemas import GenreDTO, GenreAddDTO, BookDTO
-from services.dependacies import get_genre_service
+from schemas import GenreDTO, GenreAddDTO, BookDTO
 from typing import Annotated
 from auth.dependancies import get_staff_user
 
 router = APIRouter(prefix="/genres", tags=["Жанры, Genres"])
-genre_dependency = Annotated[GenreService, Depends(get_genre_service)]
+genre_dependency = Annotated[GenreService, Depends(GenreService)]
 
 
 @router.get("/", summary="Получить все жанры")

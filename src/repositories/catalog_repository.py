@@ -1,5 +1,5 @@
-from sqlalchemy.orm import Session
-from schemas.schemas import *
+
+from schemas.undepended_schemas import *
 from sqlalchemy import select
 from database.models import Catalog
 from database.database import session_factory
