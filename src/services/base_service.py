@@ -37,8 +37,8 @@ class BaseService(Generic[ReturnSchema, CreateSchema, UpdateSchema]):
         model_dto = self.result_dto.model_validate(model, from_attributes=True)
         return model_dto
 
-    def delete(self, id: int) -> ReturnSchema:
-        self.repository.delete(id=id)
+    def delete(self, id: int) -> bool | None:
+        return self.repository.delete(id=id)
 
     def update(self, id: int, data: UpdateSchema) -> ReturnSchema:
         return self.repository.update(id=id, data=data)

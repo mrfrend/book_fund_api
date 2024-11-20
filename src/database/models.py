@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, CheckConstraint, ForeignKey
+from sqlalchemy import String, Integer, CheckConstraint, ForeignKey, text
 from database.database import Base
 import enum
 
@@ -173,4 +173,20 @@ class Edition(Base):
         CheckConstraint(
             instances_available >= 1, name="edition_instances_available_chk"
         ),
+    )
+
+
+class User(Base):
+    __tablename__ = "user"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
+    hashed_password: Mapped[str] = mapped_column(String(60), nullable=False)
+    is_user: Mapped[bool] = mapped_column(
+        nullable=False, server_default=text("true"), default=True
+    )
+    is_admin: Mapped[bool] = mapped_column(
+        nullable=False, server_default=text("false"), default=False
+    )
+    is_staff: Mapped[bool] = mapped_column(
+        nullable=False, server_default=text("false"), default=False
     )

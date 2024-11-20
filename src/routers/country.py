@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import CountryService
 from schemas.schemas import CountryDTO, CountryAddDTO
-from dependacies import get_country_service
+from services.dependacies import get_country_service
 from typing import Annotated
+from auth.dependancies import get_staff_user
 
 router = APIRouter(prefix="/countries", tags=["Страны, Countries"])
 country_dependency = Annotated[CountryService, Depends(get_country_service)]
@@ -22,13 +23,13 @@ def get_country(country_id: int, country_service: country_dependency) -> Country
 
 
 @router.post("/", summary="Добавить страну")
-def add_country(country: CountryAddDTO, country_service: country_dependency) -> CountryDTO:
+def add_country(country: CountryAddDTO, country_service: country_dependency, staff_user=Depends(get_staff_user)) -> CountryDTO:
     country = country_service.create(country)
     return country
 
 
 @router.delete("/{country_id}", summary="Удалить страну по id")
-def delete_country(country_id: int, country_service: country_dependency):
+def delete_country(country_id: int, country_service: country_dependency, staff_user=Depends(get_staff_user)):
     res = country_service.delete(id=country_id)
     if res:
         return {"message": "Страна удалена"}
@@ -38,7 +39,7 @@ def delete_country(country_id: int, country_service: country_dependency):
 
 @router.patch("/{country_id}", summary="Обновить страну по id")
 def update_country(
-    country_id: int, country: CountryAddDTO, country_service: country_dependency
+    country_id: int, country: CountryAddDTO, country_service: country_dependency, staff_user=Depends(get_staff_user)
 ) -> CountryDTO | None:
     country = country_service.update(id=country_id, data=country)
     if country is None:

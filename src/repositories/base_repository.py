@@ -33,11 +33,14 @@ class BaseRepository(Generic[ModelType]):
             session.refresh(result)
             return result
 
-    def delete(self, id: int) -> None:
+    def delete(self, id: int) -> bool | None:
         with self.db_session() as session:
             result = session.get(self.model, id)
-            session.delete(result)
-            session.commit()
+            if result:
+                session.delete(result)
+                session.commit()
+                return True
+            return None
 
     def update(self, id: int, data) -> ModelType | None:
         with self.db_session() as session:

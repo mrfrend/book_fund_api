@@ -6,8 +6,12 @@ from .catalog import router as catalog_router
 from .publisher import router as publisher_router
 from .book import router as book_router
 from .edition import router as edition_router
+from .auth import router as auth_router
+from .user import router as user_router
 
 routers = [
+    auth_router,
+    user_router,
     language_router,
     author_router,
     country_router,

@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Path
 from services import BookService
 from schemas.schemas import *
-from dependacies import get_book_service
+from services.dependacies import get_book_service
 from typing import Annotated
+from auth.dependancies import get_staff_user
 
 router = APIRouter(prefix="/books", tags=["Книги, Books"])
 book_dependency = Annotated[BookService, Depends(get_book_service)]
@@ -22,7 +23,9 @@ def get_book(book_id: int, book_service: book_dependency) -> BookDTO | None:
 
 
 @router.post("/", summary="Добавить книгу")
-def add_book(book: BookAddDTO, book_service: book_dependency) -> BookAddDTO:
+def add_book(
+    book: BookAddDTO, book_service: book_dependency, staff_user=Depends(get_staff_user)
+) -> BookAddDTO:
     book = book_service.create(book)
     return book
 
@@ -36,6 +39,7 @@ def add_genres_to_book(
     book_id: Annotated[int, Path(gt=0)],
     genres: list[str],
     book_service: book_dependency,
+    staff_user=Depends(get_staff_user),
 ):
     updated_book = book_service.add_genres(book_id=book_id, genres=genres)
     return updated_book
@@ -50,6 +54,7 @@ def add_authors_to_book(
     book_id: Annotated[int, Path(gt=0)],
     authors_id: list[int],
     book_service: book_dependency,
+    staff_user=Depends(get_staff_user),
 ):
     updated_book = book_service.add_authors(book_id=book_id, authors_id=authors_id)
     return updated_book
@@ -60,7 +65,12 @@ def add_authors_to_book(
     summary="Добавить книгу в каталог/каталоги",
     response_model=BookCatalogDTO,
 )
-def add_book_to_catalogs(book_id, catalogs: list[str], book_service: book_dependency):
+def add_book_to_catalogs(
+    book_id,
+    catalogs: list[str],
+    book_service: book_dependency,
+    staff_user=Depends(get_staff_user),
+):
     updated_book = book_service.add_catalogs(book_id=book_id, catalogs=catalogs)
     return updated_book
 
@@ -71,14 +81,19 @@ def add_book_to_catalogs(book_id, catalogs: list[str], book_service: book_depend
     response_model=BookEditionDTO,
 )
 def add_book_to_editions(
-    book_id, editions_id: list[int], book_service: book_dependency
+    book_id,
+    editions_id: list[int],
+    book_service: book_dependency,
+    staff_user=Depends(get_staff_user),
 ):
     updated_book = book_service.add_editions(book_id=book_id, editions_id=editions_id)
     return updated_book
 
 
 @router.delete("/{book_id}", summary="Удалить книгу по id")
-def delete_book(book_id: int, book_service: book_dependency):
+def delete_book(
+    book_id: int, book_service: book_dependency, staff_user=Depends(get_staff_user)
+):
     res = book_service.delete(id=book_id)
     if res:
         return {"message": "Книга была удалена"}
@@ -88,7 +103,10 @@ def delete_book(book_id: int, book_service: book_dependency):
 
 @router.patch("/{book_id}", summary="Обновить книгу по id")
 def update_book(
-    book_id: int, book: BookUpdateDTO, book_service: book_dependency
+    book_id: int,
+    book: BookUpdateDTO,
+    book_service: book_dependency,
+    staff_user=Depends(get_staff_user),
 ) -> BookDTO | None:
     book = book_service.update(id=book_id, data=book)
     if book is None:

@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import CatalogService
 from schemas.schemas import CatalogDTO, CatalogAddDTO
-from dependacies import get_catalog_service
+from services.dependacies import get_catalog_service
 from typing import Annotated
+from auth.dependancies import get_staff_user
 
 router = APIRouter(prefix="/catalogs", tags=["Каталоги, Catalogs"])
 catalog_dependency = Annotated[CatalogService, Depends(get_catalog_service)]
@@ -22,13 +23,13 @@ def get_catalog(catalog_id: int, catalog_service: catalog_dependency) -> Catalog
 
 
 @router.post("/", summary="Добавить каталог")
-def add_catalog(catalog: CatalogAddDTO, catalog_service: catalog_dependency) -> CatalogDTO:
+def add_catalog(catalog: CatalogAddDTO, catalog_service: catalog_dependency, staff_user=Depends(get_staff_user)) -> CatalogDTO:
     catalog = catalog_service.create(catalog)
     return catalog
 
 
 @router.delete("/{catalog_id}", summary="Удалить каталог по id")
-def delete_catalog(catalog_id: int, catalog_service: catalog_dependency):
+def delete_catalog(catalog_id: int, catalog_service: catalog_dependency, staff_user=Depends(get_staff_user)):
     res = catalog_service.delete(id=catalog_id)
     if res:
         return {"message": "Каталог удален"}
@@ -38,7 +39,7 @@ def delete_catalog(catalog_id: int, catalog_service: catalog_dependency):
 
 @router.patch("/{catalog_id}", summary="Обновить каталог по id")
 def update_catalog(
-    catalog_id: int, catalog: CatalogAddDTO, catalog_service: catalog_dependency
+    catalog_id: int, catalog: CatalogAddDTO, catalog_service: catalog_dependency, staff_user=Depends(get_staff_user)
 ) -> CatalogDTO | None:
     catalog = catalog_service.update(id=catalog_id, data=catalog)
     if catalog is None:

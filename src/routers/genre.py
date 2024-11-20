@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services import GenreService
 from schemas.schemas import GenreDTO, GenreAddDTO, BookDTO
-from dependacies import get_genre_service
+from services.dependacies import get_genre_service
 from typing import Annotated
+from auth.dependancies import get_staff_user
 
 router = APIRouter(prefix="/genres", tags=["Жанры, Genres"])
 genre_dependency = Annotated[GenreService, Depends(get_genre_service)]
@@ -22,21 +23,25 @@ def get_genre(genre_id: int, genre_service: genre_dependency) -> GenreDTO | None
 
 
 @router.get("/books/{genre_id}", summary="Получить книги по жанру")
-def get_books_by_genre(
-    genre_id: int, genre_service: genre_dependency
-) -> list[BookDTO]:
+def get_books_by_genre(genre_id: int, genre_service: genre_dependency) -> list[BookDTO]:
     books = genre_service.get_books_by_genre_id(genre_id=genre_id)
     return books
 
 
 @router.post("/", summary="Добавить жанр")
-def add_genre(genre: GenreAddDTO, genre_service: genre_dependency) -> GenreDTO:
+def add_genre(
+    genre: GenreAddDTO,
+    genre_service: genre_dependency,
+    staff_user=Depends(get_staff_user),
+) -> GenreDTO:
     genre = genre_service.create(genre)
     return genre
 
 
 @router.delete("/{genre_id}", summary="Удалить жанр по id")
-def delete_genre(genre_id: int, genre_service: genre_dependency):
+def delete_genre(
+    genre_id: int, genre_service: genre_dependency, staff_user=Depends(get_staff_user)
+):
     res = genre_service.delete(id=genre_id)
     if res:
         return {"message": "Жанр удален"}
@@ -46,7 +51,10 @@ def delete_genre(genre_id: int, genre_service: genre_dependency):
 
 @router.patch("/{genre_id}", summary="Обновить жанр по id")
 def update_genre(
-    genre_id: int, genre: GenreAddDTO, genre_service: genre_dependency
+    genre_id: int,
+    genre: GenreAddDTO,
+    genre_service: genre_dependency,
+    staff_user=Depends(get_staff_user),
 ) -> GenreDTO | None:
     genre = genre_service.update(id=genre_id, data=genre)
     if genre is None:
