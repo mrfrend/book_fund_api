@@ -9,27 +9,27 @@ catalog_dependency = Annotated[CatalogService, Depends(CatalogService)]
 
 
 @router.get("/", summary="Получить все каталоги")
-def get_all_catalogs(catalog_service: catalog_dependency) -> list[CatalogDTO]:
-    return catalog_service.get_all()
+async def get_all_catalogs(catalog_service: catalog_dependency) -> list[CatalogDTO]:
+    return await catalog_service.get_all()
 
 
 @router.get("/{catalog_id}", summary="Получить каталог по id")
-def get_catalog(catalog_id: int, catalog_service: catalog_dependency) -> CatalogDTO | None:
-    catalog = catalog_service.get(id=catalog_id)
+async def get_catalog(catalog_id: int, catalog_service: catalog_dependency) -> CatalogDTO | None:
+    catalog = await catalog_service.get(id=catalog_id)
     if catalog is None:
         raise HTTPException(status_code=404, detail="Каталог не был найден")
     return catalog
 
 
 @router.post("/", summary="Добавить каталог")
-def add_catalog(catalog: CatalogAddDTO, catalog_service: catalog_dependency, staff_user=Depends(get_staff_user)) -> CatalogDTO:
-    catalog = catalog_service.create(catalog)
+async def add_catalog(catalog: CatalogAddDTO, catalog_service: catalog_dependency, staff_user=Depends(get_staff_user)) -> CatalogDTO:
+    catalog = await catalog_service.create(catalog)
     return catalog
 
 
 @router.delete("/{catalog_id}", summary="Удалить каталог по id")
-def delete_catalog(catalog_id: int, catalog_service: catalog_dependency, staff_user=Depends(get_staff_user)):
-    res = catalog_service.delete(id=catalog_id)
+async def delete_catalog(catalog_id: int, catalog_service: catalog_dependency, staff_user=Depends(get_staff_user)):
+    res = await catalog_service.delete(id=catalog_id)
     if res:
         return {"message": "Каталог удален"}
     else:
@@ -37,10 +37,10 @@ def delete_catalog(catalog_id: int, catalog_service: catalog_dependency, staff_u
 
 
 @router.patch("/{catalog_id}", summary="Обновить каталог по id")
-def update_catalog(
+async def update_catalog(
     catalog_id: int, catalog: CatalogAddDTO, catalog_service: catalog_dependency, staff_user=Depends(get_staff_user)
 ) -> CatalogDTO | None:
-    catalog = catalog_service.update(id=catalog_id, data=catalog)
+    catalog = await catalog_service.update(id=catalog_id, data=catalog)
     if catalog is None:
         raise HTTPException(status_code=404, detail="Каталог не был найден")
     return catalog

@@ -11,14 +11,14 @@ router = APIRouter(prefix="/auth", tags=["Authorization, Авторизация"
 
 
 @router.post("/register", summary="Зарегистрироваться в системе")
-def register_user(user_data: UserAddDTO):
+async def register_user(user_data: UserAddDTO):
     user_repository = UserRepository()
-    user = user_repository.find_one_or_none(username=user_data.username)
+    user = await user_repository.find_one_or_none(username=user_data.username)
     if user is not None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="Пользователь уже существует"
         )
-    user_repository.add(**user_data.model_dump())
+    await user_repository.add(**user_data.model_dump())
     return {"message": "Пользователь успешно зарегистрирован"}
 
 
@@ -41,7 +41,7 @@ def get_user_info(user: User = Depends(get_current_user)) -> UserDTO:
     return UserDTO.model_validate(user, from_attributes=True)
 
 @router.get('/users', summary="Получить список всех пользователей")
-def get_users():
+async def get_users():
     user_repository = UserRepository()
-    users = user_repository.find_all()
+    users = await user_repository.find_all()
     return [UserDTO.model_validate(user, from_attributes=True) for user in users]

@@ -17,7 +17,7 @@ class Settings(BaseSettings):
 
     @property
     def db_url(self):
-        return f"sqlite:///book_fund.db"
+        return f"sqlite+aiosqlite:///book_fund.db"
 
     auth_jwt: AuthJWT = AuthJWT()
 

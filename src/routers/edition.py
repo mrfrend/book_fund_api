@@ -14,38 +14,38 @@ edition_dependency = Annotated[EditionService, Depends(EditionService)]
 
 
 @router.get("/", summary="Получить все издания")
-def get_all_editions(edition_service: edition_dependency) -> list[EditionRelDTO]:
-    editions = edition_service.get_all()
+async def get_all_editions(edition_service: edition_dependency) -> list[EditionRelDTO]:
+    editions = await edition_service.get_all()
     return editions
 
 
 @router.get("/{edition_id}", summary="Получить издание по id")
-def get_edition(
+async def get_edition(
     edition_id: int, edition_service: edition_dependency
 ) -> EditionRelDTO | None:
-    edition = edition_service.get(id=edition_id)
+    edition = await edition_service.get(id=edition_id)
     if edition is None:
         raise HTTPException(status_code=404, detail="Издание не было найдено")
     return edition
 
 
 @router.post("/", summary="Добавить издание")
-def add_edition(
+async def add_edition(
     edition: EditionAddDTO,
     edition_service: edition_dependency,
     staff_user=Depends(get_staff_user),
 ) -> EditionDTO:
-    edition = edition_service.create(edition)
+    edition = await edition_service.create(edition)
     return edition
 
 
 @router.delete("/{edition_id}", summary="Удалить издание по id")
-def delete_edition(
+async def delete_edition(
     edition_id: int,
     edition_service: edition_dependency,
     staff_user=Depends(get_staff_user),
 ):
-    res = edition_service.delete(id=edition_id)
+    res = await edition_service.delete(id=edition_id)
     if res:
         return {"message": "Издание удалено"}
     else:
@@ -53,13 +53,13 @@ def delete_edition(
 
 
 @router.patch("/{edition_id}", summary="Обновить издание по id")
-def update_edition(
+async def update_edition(
     edition_id: int,
     edition: EditionUpdateDTO,
     edition_service: edition_dependency,
     staff_user=Depends(get_staff_user),
 ) -> EditionDTO | None:
-    edition = edition_service.update(id=edition_id, data=edition)
+    edition = await edition_service.update(id=edition_id, data=edition)
     if edition is None:
         raise HTTPException(status_code=404, detail="Издание не было найдено")
     return edition

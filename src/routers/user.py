@@ -7,9 +7,9 @@ router = APIRouter(prefix="/user", tags=["Управление пользова�
 
 
 @router.patch("/{user_id}")
-def update_roles_user(user_id: int, roles: UserRoles, admin_user = Depends(get_admin_user)):
+async def update_roles_user(user_id: int, roles: UserRoles, admin_user = Depends(get_admin_user)):
     user_repository = UserRepository()
-    user = user_repository.update_roles(user_id, roles)
+    user = await user_repository.update_roles(user_id, roles)
     if user is None:
         return {"message": "Пользователь не найден"}
     return UserDTO.model_validate(user, from_attributes=True)

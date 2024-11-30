@@ -9,8 +9,8 @@ author_dependency = Annotated[AuthorService, Depends(AuthorService)]
 
 
 @router.get("/", summary="Получить всех авторов")
-def get_all_authors(author_service: author_dependency) -> list[AuthorDTO]:
-    return author_service.get_all()
+async def get_all_authors(author_service: author_dependency) -> list[AuthorDTO]:
+    return await author_service.get_all()
 
 
 @router.get(
@@ -18,36 +18,36 @@ def get_all_authors(author_service: author_dependency) -> list[AuthorDTO]:
     summary="Получить книги, написанные автором",
     response_model=list[BookDTO],
 )
-def get_books_by_author(author_id: int, author_service: author_dependency):
-    books = author_service.get_books_by_author_id(author_id=author_id)
+async def get_books_by_author(author_id: int, author_service: author_dependency):
+    books = await author_service.get_books_by_author_id(author_id=author_id)
     return books
 
 
 @router.get("/{author_id}", summary="Получить автора по id")
-def get_author(author_id: int, author_service: author_dependency) -> AuthorDTO | None:
-    author = author_service.get(id=author_id)
+async def get_author(author_id: int, author_service: author_dependency) -> AuthorDTO | None:
+    author = await author_service.get(id=author_id)
     if author is None:
         raise HTTPException(status_code=404, detail="Автор не был найден")
     return author
 
 
 @router.post("/", summary="Добавить автора")
-def add_author(
+async def add_author(
     author: AuthorAddDTO,
     author_service: author_dependency,
     staff_user=Depends(get_staff_user),
 ) -> AuthorDTO:
-    author = author_service.create(author)
+    author = await author_service.create(author)
     return author
 
 
 @router.delete("/{author_id}", summary="Удалить автора по id")
-def delete_author(
+async def delete_author(
     author_id: int,
     author_service: author_dependency,
     staff_user=Depends(get_staff_user),
 ):
-    res = author_service.delete(id=author_id)
+    res = await author_service.delete(id=author_id)
     if res:
         return {"message": "Автор удален"}
     else:
@@ -55,13 +55,13 @@ def delete_author(
 
 
 @router.patch("/{author_id}", summary="Обновить автора по id")
-def update_author(
+async def update_author(
     author_id: int,
     author: AuthorUpdateDTO,
     author_service: author_dependency,
     staff_user=Depends(get_staff_user),
 ) -> AuthorDTO | None:
-    author = author_service.update(id=author_id, data=author)
+    author = await author_service.update(id=author_id, data=author)
     if author is None:
         raise HTTPException(status_code=404, detail="Автор не был найден")
     return author

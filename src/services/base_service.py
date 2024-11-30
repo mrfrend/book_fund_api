@@ -20,25 +20,25 @@ class BaseService(Generic[ReturnSchema, CreateSchema, UpdateSchema]):
         self.create_dto = create_dto
         self.update_dto = update_dto
 
-    def get_all(self) -> list[ReturnSchema]:
-        data = self.repository.get_all()
+    async def get_all(self) -> list[ReturnSchema]:
+        data = await self.repository.get_all()
         result = [
             self.result_dto.model_validate(row, from_attributes=True) for row in data
         ]
         return result
 
-    def get(self, id: int) -> ReturnSchema:
-        model = self.repository.get(id=id)
+    async def get(self, id: int) -> ReturnSchema:
+        model = await self.repository.get(id=id)
         model_dto = self.result_dto.model_validate(model, from_attributes=True)
         return model_dto
 
-    def create(self, data: CreateSchema) -> ReturnSchema:
-        model = self.repository.create(data)
+    async def create(self, data: CreateSchema) -> ReturnSchema:
+        model = await self.repository.create(data)
         model_dto = self.result_dto.model_validate(model, from_attributes=True)
         return model_dto
 
-    def delete(self, id: int) -> bool | None:
-        return self.repository.delete(id=id)
+    async def delete(self, id: int) -> bool | None:
+        return await self.repository.delete(id=id)
 
-    def update(self, id: int, data: UpdateSchema) -> ReturnSchema:
-        return self.repository.update(id=id, data=data)
+    async def update(self, id: int, data: UpdateSchema) -> ReturnSchema:
+        return await self.repository.update(id=id, data=data)
