@@ -3,8 +3,6 @@ from .services import (
     AuthorService,
     PublisherService,
     GenreService,
-    LanguageService,
     CountryService,
-    EditionService,
     CatalogService,
 )

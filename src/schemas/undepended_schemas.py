@@ -3,9 +3,6 @@ from pydantic import BaseModel, Field
 import enum
 
 __all__ = [
-    "Status",
-    "LanguageAddDTO",
-    "LanguageDTO",
     "GenreAddDTO",
     "GenreDTO",
     "AuthorAddDTO",
@@ -18,19 +15,6 @@ __all__ = [
     "PublisherAddDTO",
     "PublisherDTO",
 ]
-
-
-class Status(enum.Enum):
-    available = "Доступно"
-    unavailable = "Недоступно"
-
-
-class LanguageAddDTO(BaseModel):
-    name: str = Field(max_length=25)
-
-
-class LanguageDTO(LanguageAddDTO):
-    id: int
 
 
 class GenreAddDTO(BaseModel):
@@ -74,7 +58,7 @@ class CountryDTO(CountryAddDTO):
 
 
 class PublisherAddDTO(BaseModel):
-    name: str
+    name: str = Field(max_length=50)
 
 
 class PublisherDTO(PublisherAddDTO):

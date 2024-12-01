@@ -43,15 +43,15 @@ class BookService(BaseService[BookDTO, BookAddDTO, BookUpdateDTO]):
         )
         return book_catalog_dto
 
-    async def add_editions(self, book_id: int, editions_id: list[str]):
-        editions_models = await EditionRepository().get_specific_editions(editions_id)
-        updated_book = await self.repository.add_related_entities(
-            book_id, editions_models, "editions"
-        )
-        edition_rel_dto = EditionRelDTO.model_validate(
-            updated_book, from_attributes=True
-        )
-        return edition_rel_dto
+    # async def add_editions(self, book_id: int, editions_id: list[str]):
+    #     editions_models = await EditionRepository().get_specific_editions(editions_id)
+    #     updated_book = await self.repository.add_related_entities(
+    #         book_id, editions_models, "editions"
+    #     )
+    #     edition_rel_dto = EditionRelDTO.model_validate(
+    #         updated_book, from_attributes=True
+    #     )
+    #     return edition_rel_dto
 
 
 class CatalogService(BaseService[CatalogDTO, CatalogAddDTO, CatalogAddDTO]):
@@ -78,13 +78,7 @@ class PublisherService(BaseService[PublisherDTO, PublisherAddDTO, PublisherAddDT
         )
 
 
-class EditionService(BaseService[EditionDTO, EditionAddDTO, EditionUpdateDTO]):
-    def __init__(self):
-        super().__init__(EditionRepository, EditionDTO, EditionAddDTO, EditionUpdateDTO)
 
-    async def get_all(self) -> list[EditionRelDTO]:
-        editions = await self.repository.get_all()
-        return editions
 
 
 class GenreService(BaseService[GenreDTO, GenreAddDTO, GenreAddDTO]):
@@ -99,13 +93,21 @@ class GenreService(BaseService[GenreDTO, GenreAddDTO, GenreAddDTO]):
         return books_dto
 
 
-class LanguageService(BaseService[LanguageDTO, LanguageAddDTO, LanguageAddDTO]):
-    def __init__(self):
-        super().__init__(
-            LanguageRepository, LanguageDTO, LanguageAddDTO, LanguageAddDTO
-        )
+# class LanguageService(BaseService[LanguageDTO, LanguageAddDTO, LanguageAddDTO]):
+#     def __init__(self):
+#         super().__init__(
+#             LanguageRepository, LanguageDTO, LanguageAddDTO, LanguageAddDTO
+#         )
 
 
 class CountryService(BaseService[CountryDTO, CountryAddDTO, CountryAddDTO]):
     def __init__(self):
         super().__init__(CountryRepository, CountryDTO, CountryAddDTO, CountryAddDTO)
+
+# class EditionService(BaseService[EditionDTO, EditionAddDTO, EditionUpdateDTO]):
+#     def __init__(self):
+#         super().__init__(EditionRepository, EditionDTO, EditionAddDTO, EditionUpdateDTO)
+
+#     async def get_all(self) -> list[EditionRelDTO]:
+#         editions = await self.repository.get_all()
+#         return editions

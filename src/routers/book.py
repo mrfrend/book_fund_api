@@ -7,7 +7,6 @@ from schemas import (
     BookGenreDTO,
     BookAuthorDTO,
     BookCatalogDTO,
-    BookEditionDTO,
     BookUpdateDTO,
 )
 from typing import Annotated
@@ -85,21 +84,7 @@ async def add_book_to_catalogs(
     return updated_book
 
 
-@router.post(
-    "/edition/{book_id}",
-    summary="Добавить книгу в издание/издания",
-    response_model=BookEditionDTO,
-)
-async def add_book_to_editions(
-    book_id,
-    editions_id: list[int],
-    book_service: book_dependency,
-    staff_user=Depends(get_staff_user),
-):
-    updated_book = await book_service.add_editions(
-        book_id=book_id, editions_id=editions_id
-    )
-    return updated_book
+
 
 
 @router.delete("/{book_id}", summary="Удалить книгу по id")
@@ -124,3 +109,19 @@ async def update_book(
     if book is None:
         raise HTTPException(status_code=404, detail="Книга не была найден")
     return book
+
+# @router.post(
+#     "/edition/{book_id}",
+#     summary="Добавить книгу в издание/издания",
+#     response_model=BookEditionDTO,
+# )
+# async def add_book_to_editions(
+#     book_id,
+#     editions_id: list[int],
+#     book_service: book_dependency,
+#     staff_user=Depends(get_staff_user),
+# ):
+#     updated_book = await book_service.add_editions(
+#         book_id=book_id, editions_id=editions_id
+#     )
+#     return updated_book

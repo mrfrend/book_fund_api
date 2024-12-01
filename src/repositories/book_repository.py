@@ -2,7 +2,7 @@ from typing import Union
 from schemas.undepended_schemas import *
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload, joinedload
-from database.models import Book, Genre, Author, Catalog, Edition
+from database.models import Book, Genre, Author, Catalog
 from database.database import async_session_factory
 from .base_repository import BaseRepository
 
@@ -21,10 +21,9 @@ class BookRepository(BaseRepository[Book]):
                 .options(selectinload(Book.genres))
                 .options(selectinload(Book.authors))
                 .options(selectinload(Book.catalogs))
-                .options(selectinload(Book.editions))
+                .options(joinedload(Book.publisher))
                 .options(joinedload(Book.country))
             )
-            print(query)
             execution = await session.execute(query)
             result = execution.unique().scalars().all()
             return result
@@ -32,7 +31,7 @@ class BookRepository(BaseRepository[Book]):
     async def add_related_entities(
         self,
         book_id: int,
-        entities: list[Union["Genre", "Author", "Catalog", "Edition"]],
+        entities: list[Union["Genre", "Author", "Catalog"]],
         entity_attr: str,
     ):
         async with self.db_session() as session:
@@ -55,22 +54,22 @@ class BookRepository(BaseRepository[Book]):
             result = execution.unique().scalar()
             return result
 
-    async def add_editions(self, book_id: int, editions: list[Edition]):
-        async with self.db_session() as session:
-            book: Book | None = await session.get(Book, book_id)
-            if book is None:
-                return None
-            book.editions.extend(editions)
-            await session.commit()
-            await session.refresh(book)
-            query = (
-                select(Book)
-                .options(joinedload(Book.editions))
-                .where(Book.id == book_id)
-            )
-            execution = await session.execute(query)
-            result = execution.unique().scalar()
-            return result
+        # async def add_editions(self, book_id: int, editions: list[Edition]):
+        #     async with self.db_session() as session:
+        #         book: Book | None = await session.get(Book, book_id)
+        #         if book is None:
+        #             return None
+        #         book.editions.extend(editions)
+        #         await session.commit()
+        #         await session.refresh(book)
+        #         query = (
+        #             select(Book)
+        #             .options(joinedload(Book.editions))
+        #             .where(Book.id == book_id)
+        #         )
+        #         execution = await session.execute(query)
+        #         result = execution.unique().scalar()
+        #         return result
 
         # async def add_genres(self, book_id: int, genres: list[Genre]):
         #     async with self.db_session() as session:
@@ -107,18 +106,18 @@ class BookRepository(BaseRepository[Book]):
         #         return result
 
         # async def add_catalogs(self, book_id: int, catalogs: list[Catalog]):
-        async with self.db_session() as session:
-            book: Book | None = session.get(Book, book_id)
-            if book is None:
-                return None
-            book.authors.extend(catalogs)
-            session.commit()
-            session.refresh(book)
-            query = (
-                select(Book)
-                .options(selectinload(Book.catalogs))
-                .where(Book.id == book_id)
-            )
-            execution = session.execute(query)
-            result = execution.unique().scalar()
-            return result
+        #     async with self.db_session() as session:
+        #         book: Book | None = session.get(Book, book_id)
+        #         if book is None:
+        #             return None
+        #         book.catalogs.extend(catalogs)
+        #         session.commit()
+        #         session.refresh(book)
+        #     query = (
+        #         select(Book)
+        #         .options(selectinload(Book.catalogs))
+        #         .where(Book.id == book_id)
+        #     )
+        #     execution = session.execute(query)
+        #     result = execution.unique().scalar()
+        #     return result
