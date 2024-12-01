@@ -29,10 +29,14 @@ __all__ = [
 
 class BookAddDTO(BaseModel):
     title: str = Field(max_length=40)
-    keywords: str | None = None
-    year_released: int = Field(gt=0, lt=2025)
+    year_creation: int = Field(gt=0, le=2024)
+    year_published: int = Field(gt=0, le=2024)
+    page_amount: int = Field(gt=0)
+    quantity: int = Field(gt=0)
+    isbn_number: str = Field(max_length=18, default="978-3-16-148410-0")
     description: str = Field(max_length=500)
     country_id: int = Field(gt=0)
+    publisher_id: int = Field(gt=0)
 
 
 class BookUpdateDTO(BaseModel):
