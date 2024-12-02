@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Form, Response
-from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
 from schemas.user import UserAddDTO, TokenInfo, UserDTO
 from repositories.user_repository import UserRepository
@@ -23,10 +22,11 @@ async def register_user(user_data: UserAddDTO):
 
 
 @router.post("/login", summary="Войти в систему", response_model=TokenInfo)
-def auth_user_jwt(response: Response, user: UserAddDTO = Depends(validate_user)):
+def auth_user_jwt(response: Response,user: UserAddDTO = Depends(validate_user)):
     jwt_payload = {"sub": user.username}
     token = encode_jwt(jwt_payload)
-    response.set_cookie(key="access_token", value=token, httponly=True)
+    # response.set_cookie(key="access_token", value=token, httponly=True)
+    response.headers['Authorization'] = f"Bearer {token}"
     return TokenInfo(access_token=token)
 
 
@@ -40,7 +40,8 @@ def logout(response: Response):
 def get_user_info(user: User = Depends(get_current_user)) -> UserDTO:
     return UserDTO.model_validate(user, from_attributes=True)
 
-@router.get('/users', summary="Получить список всех пользователей")
+
+@router.get("/users", summary="Получить список всех пользователей")
 async def get_users():
     user_repository = UserRepository()
     users = await user_repository.find_all()

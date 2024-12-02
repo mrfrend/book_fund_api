@@ -17,5 +17,4 @@ for router in routers:
     app.include_router(router)
 
 if __name__ == "__main__":
-    create_tables()
     uvicorn.run("main:app", port=8000, reload=True)

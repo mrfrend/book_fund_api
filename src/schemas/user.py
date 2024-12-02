@@ -8,9 +8,6 @@ class UserAddDTO(BaseModel):
 
 class UserDTO(UserAddDTO):
     id: int
-    is_user: bool = True
-    is_admin: bool = False
-    is_staff: bool = False
     password: str = Field(alias='hashed_password')
 
 class UserRoles(BaseModel):

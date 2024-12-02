@@ -13,7 +13,7 @@ class UserRepository:
     async def find_one_or_none(self, username: str) -> User | None:
         async with self.db_session() as session:
             query = select(User).where(User.username == username)
-            result = await session.execute(query).scalar_one_or_none()
+            result = (await session.execute(query)).scalar_one_or_none()
             print(result)
             return result
 
