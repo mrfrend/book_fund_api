@@ -25,8 +25,8 @@ async def register_user(user_data: UserAddDTO):
 def auth_user_jwt(response: Response,user: UserAddDTO = Depends(validate_user)):
     jwt_payload = {"sub": user.username}
     token = encode_jwt(jwt_payload)
-    # response.set_cookie(key="access_token", value=token, httponly=True)
     response.headers['Authorization'] = f"Bearer {token}"
+    response.set_cookie(key="access_token", value=token, httponly=True)
     return TokenInfo(access_token=token)
 
 

@@ -63,6 +63,7 @@ class BookUpdateDTO(BaseModel):
 
 class BookDTO(BookAddDTO):
     id: int
+    img_path: str
 
 
 class BookGenreDTO(BookDTO):

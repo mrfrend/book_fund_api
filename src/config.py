@@ -21,7 +21,7 @@ class Settings(BaseSettings):
 
     auth_jwt: AuthJWT = AuthJWT()
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file="../.env")
 
 
 settings = Settings()

@@ -1,10 +1,20 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from database.database import Base, sync_engine
 from database.models import *
 import uvicorn
-import asyncio
 from routers import routers
-from repositories.user_repository import UserRepository
+
+origins = [
+    "http://localhost:8000/",
+    "https://localhost:3000/",
+    "http://localhost/",
+    "https://localhost/",
+    "http://127.0.0.1/",
+    "https://127.0.0.1/",
+    "http://127.0.0.1:8000/",
+    "https://127.0.0.1:8000/",
+]
 
 
 def create_tables():
@@ -15,6 +25,14 @@ def create_tables():
 app = FastAPI(title="Book fund API", summary="API библиотечного фонда")
 for router in routers:
     app.include_router(router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", port=8000, reload=True)

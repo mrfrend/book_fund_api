@@ -1,3 +1,4 @@
+from fastapi import UploadFile
 from database.models import Genre
 from repositories import *
 from schemas import *
@@ -7,6 +8,16 @@ from services.base_service import BaseService
 class BookService(BaseService[BookDTO, BookAddDTO, BookUpdateDTO]):
     def __init__(self):
         super().__init__(BookRepository, BookDTO, BookAddDTO, BookUpdateDTO)
+
+    async def create(self, data: BookAddDTO, image: UploadFile):
+        updated_book = await self.repository.create(data, image)
+        book_dto = BookDTO.model_validate(updated_book, from_attributes=True)
+        return book_dto
+
+    async def get_image_book(self, book_id: int) -> tuple[bytes, str]:
+        image_content, image_path = await self.repository.get_image_book(book_id)
+        return (image_content, image_path)
+
 
     async def get_all(self) -> list[BookRelDTO]:
         data = await self.repository.get_all()

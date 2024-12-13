@@ -1,8 +1,11 @@
 from typing import Union
+from fastapi import UploadFile
 from schemas.undepended_schemas import *
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.ext.asyncio import AsyncSession
 from database.models import Book, Genre, Author, Catalog
+from schemas import BookAddDTO
 from database.database import async_session_factory
 from .base_repository import BaseRepository
 
@@ -13,6 +16,30 @@ class BookRepository(BaseRepository[Book]):
             model=Book,
             db_session=async_session_factory,
         )
+    
+    async def write_image(self, image: UploadFile, book: Book):
+        img_name = image.filename
+        with open(f'images/{img_name}', 'wb') as buffer:
+            buffer.write(await image.read())
+            book.img_path = f'images/{img_name}'
+    
+    async def create(self, data: BookAddDTO, image: UploadFile) -> Book:
+        async with self.db_session() as session:
+            book_model= Book(**data.model_dump())
+            session.add(book_model)
+            await self.write_image(image, book_model)
+            await session.commit()
+            await session.refresh(book_model)
+            return book_model
+
+    async def get_image_book(self, book_id: int) -> tuple[bytes, str]:
+        async with self.db_session() as session:
+            book: Book = await session.get(Book, book_id)
+            if book is None:
+                return None
+            with open(book.img_path, 'rb') as buffer:
+                return (buffer.read(), book.img_path)
+
 
     async def get_all(self) -> list[Book]:
         async with self.db_session() as session:

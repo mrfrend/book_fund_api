@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from services import PublisherService
 from schemas.undepended_schemas import PublisherDTO, PublisherAddDTO
 from typing import Annotated
-from auth.dependancies import get_staff_user
+from auth.dependancies import get_current_user
 
 router = APIRouter(prefix="/publishers", tags=["Издатели, Publishers"])
 publisher_dependency = Annotated[PublisherService, Depends(PublisherService)]
@@ -27,7 +27,7 @@ async def get_publisher(
 async def add_publisher(
     publisher: PublisherAddDTO,
     publisher_service: publisher_dependency,
-    staff_user=Depends(get_staff_user),
+    staff_user=Depends(get_current_user),
 ) -> PublisherDTO:
     publisher = await publisher_service.create(publisher)
     return publisher
@@ -37,7 +37,7 @@ async def add_publisher(
 async def delete_publisher(
     publisher_id: int,
     publisher_service: publisher_dependency,
-    staff_user=Depends(get_staff_user),
+    staff_user=Depends(get_current_user),
 ):
     res = await publisher_service.delete(id=publisher_id)
     if res:
@@ -51,7 +51,7 @@ async def update_publisher(
     publisher_id: int,
     publisher: PublisherAddDTO,
     publisher_service: publisher_dependency,
-    staff_user=Depends(get_staff_user),
+    staff_user=Depends(get_current_user),
 ) -> PublisherDTO | None:
     publisher = await publisher_service.update(id=publisher_id, data=publisher)
     if publisher is None:

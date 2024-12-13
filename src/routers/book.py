@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, Path
+from fastapi import APIRouter, Depends, HTTPException, Path, Form, UploadFile, Response
 from services import BookService
+from repositories import BookRepository
 from schemas import (
     BookRelDTO,
     BookDTO,
@@ -10,7 +11,7 @@ from schemas import (
     BookUpdateDTO,
 )
 from typing import Annotated
-from auth.dependancies import get_staff_user
+from auth.dependancies import get_current_user
 
 router = APIRouter(prefix="/books", tags=["Книги, Books"])
 book_dependency = Annotated[BookService, Depends(BookService)]
@@ -29,12 +30,30 @@ async def get_book(book_id: int, book_service: book_dependency) -> BookDTO | Non
     return book
 
 
-@router.post("/", summary="Добавить книгу")
+@router.post("/", summary="Добавить книгу", response_model=BookDTO, response_model_exclude={'img_path'})
 async def add_book(
-    book: BookAddDTO, book_service: book_dependency, staff_user=Depends(get_staff_user)
-) -> BookAddDTO:
-    book = await book_service.create(book)
+    image: UploadFile, book_service: book_dependency, title: str = Form(max_length=40), year_creation: int = Form(gt=0, le=2024), year_published: int = Form(gt=0, le=2024), page_amount: int = Form(gt=0), quantity: int = Form(gt=0), description: str = Form(max_length=500), country_id: int = Form(gt=0), publisher_id: int = Form(gt=0), staff_user=Depends(get_current_user)
+):
+    book_model = BookAddDTO(
+        image=image,
+        title=title,
+        year_creation=year_creation,
+        year_published=year_published,
+        page_amount=page_amount,
+        quantity=quantity,
+        description=description,
+        country_id=country_id,
+        publisher_id=publisher_id,
+    )
+
+    book = await book_service.create(book_model, image)
     return book
+
+@router.get('/image/{book_id}', summary='Получить картинку книги')
+async def get_image_book(book_id: int, book_service: book_dependency):
+    image_content, image_path = await book_service.get_image_book(book_id)
+    return Response(content=image_content, media_type=f'image/{image_path.split('.')[-1]}')
+
 
 
 @router.post(
@@ -46,7 +65,7 @@ async def add_genres_to_book(
     book_id: Annotated[int, Path(gt=0)],
     genres: list[str],
     book_service: book_dependency,
-    staff_user=Depends(get_staff_user),
+    staff_user=Depends(get_current_user),
 ):
     updated_book = await book_service.add_genres(book_id=book_id, genres=genres)
     return updated_book
@@ -61,7 +80,7 @@ async def add_authors_to_book(
     book_id: Annotated[int, Path(gt=0)],
     authors_id: list[int],
     book_service: book_dependency,
-    staff_user=Depends(get_staff_user),
+    staff_user=Depends(get_current_user),
 ):
     updated_book = await book_service.add_authors(
         book_id=book_id, authors_id=authors_id
@@ -78,18 +97,15 @@ async def add_book_to_catalogs(
     book_id,
     catalogs: list[str],
     book_service: book_dependency,
-    staff_user=Depends(get_staff_user),
+    staff_user=Depends(get_current_user),
 ):
     updated_book = await book_service.add_catalogs(book_id=book_id, catalogs=catalogs)
     return updated_book
 
 
-
-
-
 @router.delete("/{book_id}", summary="Удалить книгу по id")
 async def delete_book(
-    book_id: int, book_service: book_dependency, staff_user=Depends(get_staff_user)
+    book_id: int, book_service: book_dependency, staff_user=Depends(get_current_user)
 ):
     res = await book_service.delete(id=book_id)
     if res:
@@ -103,12 +119,13 @@ async def update_book(
     book_id: int,
     book: BookUpdateDTO,
     book_service: book_dependency,
-    staff_user=Depends(get_staff_user),
+    staff_user=Depends(get_current_user),
 ) -> BookDTO | None:
     book = await book_service.update(id=book_id, data=book)
     if book is None:
         raise HTTPException(status_code=404, detail="Книга не была найден")
     return book
+
 
 # @router.post(
 #     "/edition/{book_id}",
@@ -119,7 +136,7 @@ async def update_book(
 #     book_id,
 #     editions_id: list[int],
 #     book_service: book_dependency,
-#     staff_user=Depends(get_staff_user),
+#     staff_user=Depends(get_current_user),
 # ):
 #     updated_book = await book_service.add_editions(
 #         book_id=book_id, editions_id=editions_id

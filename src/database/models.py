@@ -56,12 +56,10 @@ class Country(Base):
 class Book(Base):
     __tablename__ = "book"
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(40), nullable=False, unique=True)
-    description: Mapped[str] = mapped_column(String(500), nullable=False)
+    title: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+    description: Mapped[str] = mapped_column(String(800), nullable=False)
     page_amount: Mapped[int] = mapped_column(Integer, nullable=False)
-    quantity: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=1
-    )
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     publisher_id: Mapped[int] = mapped_column(
         ForeignKey("publisher.id", ondelete="RESTRICT"),
         nullable=False,
@@ -83,6 +81,7 @@ class Book(Base):
     genres: Mapped[list["Genre"]] = relationship(
         back_populates="books", uselist=True, secondary="book_genre"
     )
+    img_path: Mapped[str] = mapped_column(String(100), nullable=True)
 
     __table_args__ = (
         CheckConstraint(

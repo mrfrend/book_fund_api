@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from services import GenreService
 from schemas import GenreDTO, GenreAddDTO, BookDTO
 from typing import Annotated
-from auth.dependancies import get_staff_user
+from auth.dependancies import get_current_user
 
 router = APIRouter(prefix="/genres", tags=["Жанры, Genres"])
 genre_dependency = Annotated[GenreService, Depends(GenreService)]
@@ -31,7 +31,7 @@ async def get_books_by_genre(genre_id: int, genre_service: genre_dependency) -> 
 async def add_genre(
     genre: GenreAddDTO,
     genre_service: genre_dependency,
-    staff_user=Depends(get_staff_user),
+    staff_user=Depends(get_current_user),
 ) -> GenreDTO:
     genre = await genre_service.create(genre)
     return genre
@@ -39,7 +39,7 @@ async def add_genre(
 
 @router.delete("/{genre_id}", summary="Удалить жанр по id")
 async def delete_genre(
-    genre_id: int, genre_service: genre_dependency, staff_user=Depends(get_staff_user)
+    genre_id: int, genre_service: genre_dependency, staff_user=Depends(get_current_user)
 ):
     res = await genre_service.delete(id=genre_id)
     if res:
@@ -53,7 +53,7 @@ async def update_genre(
     genre_id: int,
     genre: GenreAddDTO,
     genre_service: genre_dependency,
-    staff_user=Depends(get_staff_user),
+    staff_user=Depends(get_current_user),
 ) -> GenreDTO | None:
     genre = await genre_service.update(id=genre_id, data=genre)
     if genre is None:
