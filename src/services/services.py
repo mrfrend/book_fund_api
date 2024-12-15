@@ -3,6 +3,7 @@ from database.models import Book, Genre
 from repositories import *
 from schemas import *
 import asyncio
+from schemas.book_schemas import BookUpdateFrontDTO
 from services.base_service import BaseService
 from repositories.genre_repository import GenreRepository
 from repositories.author_repository import AuthorRepository
@@ -12,6 +13,20 @@ from repositories.catalog_repository import CatalogRepository
 class BookService(BaseService[BookDTO, BookAddDTO, BookUpdateDTO]):
     def __init__(self):
         super().__init__(BookRepository, BookDTO, BookAddDTO, BookUpdateDTO)
+
+    async def update(
+        self, id: int, data: BookUpdateFrontDTO, image: UploadFile = None
+    ) -> BookRelDTO:
+        await self.repository.update(id, data, image)
+        catalogs, authors, genres = await asyncio.gather(
+            CatalogRepository().get_specific_catalogs(data.catalogs),
+            AuthorRepository().get_specific_authors(data.authors),
+            GenreRepository().get_specific_genres(data.genres),
+        )
+        updated_book = await self.repository.update_entities_to_book(
+            id, catalogs, authors, genres
+        )
+        return updated_book
 
     async def create(self, data: BookAddDTO, image: UploadFile) -> BookRelDTO:
         created_book_id = await self.repository.create(data, image)
@@ -23,7 +38,7 @@ class BookService(BaseService[BookDTO, BookAddDTO, BookUpdateDTO]):
         updated_book = await self.repository.add_entities_to_book(
             created_book_id, catalogs, authors, genres
         )
-        print('updated_book', updated_book)
+        print("updated_book", updated_book)
         return updated_book
 
     async def get_image_book(self, book_id: int) -> tuple[bytes, str]:

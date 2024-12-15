@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator, ValidationError
+from pydantic import BaseModel, Field, field_validator, ValidationError, model_validator
 from .undepended_schemas import (
     GenreDTO,
     AuthorDTO,
@@ -54,14 +54,20 @@ class BookUpdateDTO(BaseModel):
     country_id: int | None = Field(gt=0)
     publisher_id: int | None = Field(gt=0)
 
-    @field_validator("isbn_number")
-    def check_isbn_format(cls, value):
-        if value is None:
-            return value
-        isbn_13_regex = r"^97[89]-\d{1,5}-\d{1,7}-\d{1,6}-\d$"
-        if not re.match(isbn_13_regex, value):
-            raise ValidationError("Невалидный номер ISBN")
-        return value
+    # @field_validator("isbn_number")
+    # def check_isbn_format(cls, value):
+    #     if value is None:
+    #         return value
+    #     isbn_13_regex = r"^97[89]-\d{1,5}-\d{1,7}-\d{1,6}-\d$"
+    #     if not re.match(isbn_13_regex, value):
+    #         raise ValidationError("Невалидный номер ISBN")
+    #     return value
+
+
+class BookUpdateFrontDTO(BookUpdateDTO):
+    authors: list[str] | None = None
+    catalogs: list[str] | None = None
+    genres: list[str] | None = None
 
 
 class BookDTO(BookUpdateDTO):

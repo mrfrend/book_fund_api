@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Path, Form, UploadFile, Response
+from schemas.book_schemas import BookUpdateFrontDTO
 from services import BookService
 from repositories import BookRepository
 from schemas import (
@@ -146,11 +147,37 @@ async def delete_book(
 @router.patch("/{book_id}", summary="Обновить книгу по id")
 async def update_book(
     book_id: int,
-    book: BookUpdateDTO,
     book_service: book_dependency,
+    image: UploadFile | None= None,
+    title: str | None = Form(default=None),
+    year_creation: int | None = Form(default=None),
+    year_published: int | None = Form(default=None),
+    page_amount: int | None = Form(default=None),
+    quantity: int | None = Form(default=None),
+    isbn_number: str | None = Form(default=None),
+    description: str | None = Form(default=None),
+    country_id: int | None = Form(default=None),
+    publisher_id: int | None = Form(default=None),
+    authors: list[str] | None = Form(default=None),
+    catalogs: list[str] | None = Form(default=None),
+    genres: list[str] | None = Form(default=None),
     staff_user=Depends(get_current_user),
 ) -> BookDTO | None:
-    book = await book_service.update(id=book_id, data=book)
+    book_model = BookUpdateFrontDTO(
+        title=title,
+        year_creation=year_creation,
+        year_published=year_published,
+        page_amount=page_amount,
+        quantity=quantity,
+        isbn_number=isbn_number,
+        description=description,
+        country_id=country_id,
+        publisher_id=publisher_id,
+        authors=authors,
+        catalogs=catalogs,
+        genres=genres,
+    )
+    book = await book_service.update(id=book_id, data=book_model)
     if book is None:
         raise HTTPException(status_code=404, detail="Книга не была найден")
     return book

@@ -1,6 +1,6 @@
 from typing import Union
 from fastapi import UploadFile
-from schemas.book_schemas import BookRelDTO
+from schemas.book_schemas import BookRelDTO, BookUpdateFrontDTO
 from schemas.undepended_schemas import *
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload, joinedload
@@ -22,6 +22,52 @@ class BookRepository(BaseRepository[Book]):
         with open(f"images/{img_name}", "wb") as buffer:
             buffer.write(await image.read())
             book.img_path = f"images/{img_name}"
+
+    async def update(
+        self, id: int, data: BookUpdateFrontDTO, image: UploadFile | None
+    ) -> Book:
+        async with self.db_session() as session:
+            book = await session.get(Book, id)
+            if image:
+                await self.write_image(image, book)
+            for attr, value in data.model_dump(
+                exclude_unset=True, exclude={"authors", "catalogs", "genres"}
+            ).items():
+                setattr(book, attr, int(value) if value.isdigit() else value)
+
+            await session.refresh(book)
+            await session.commit()
+            return book
+
+    async def update_entities_to_book(
+        self,
+        id: int,
+        catalogs: list[Catalog],
+        authors: list[Author],
+        genres: list[Genre],
+    ) -> BookRelDTO:
+        async with self.db_session() as session:
+            query = (
+                select(Book)
+                .options(selectinload(Book.genres))
+                .options(selectinload(Book.authors))
+                .options(selectinload(Book.catalogs))
+                .options(joinedload(Book.publisher))
+                .options(joinedload(Book.country))
+                .where(Book.id == id)
+            )
+            execution = await session.execute(query)
+            book: Book = execution.unique().scalar()
+            if genres:
+                book.genres = genres
+            if catalogs:
+                book.catalogs = catalogs
+            if authors:
+                book.authors = authors
+            await session.refresh(book)
+            book_dto = BookRelDTO.model_validate(book, from_attributes=True)
+            await session.commit()
+            return book_dto
 
     async def add_entities_to_book(
         self,
