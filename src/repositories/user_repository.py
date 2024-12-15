@@ -20,7 +20,7 @@ class UserRepository:
     async def find_all(self) -> list[User]:
         async with self.db_session() as session:
             query = select(User)
-            result = await session.execute(query).scalars().all()
+            result = (await session.execute(query)).scalars().all()
             return result
 
     async def add(self, username: str, password: str):

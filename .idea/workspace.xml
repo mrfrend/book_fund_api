@@ -3,19 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="32308a66-dbff-418e-af4c-5f23ad1c6687" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/book_fund.db" beforeDir="false" afterPath="$PROJECT_DIR$/book_fund.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/auth/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/auth/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/database/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/database/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routers/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/routers/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routers/author.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/routers/author.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routers/book.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/routers/book.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routers/catalog.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/routers/catalog.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routers/country.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/routers/country.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routers/genre.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/routers/genre.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routers/publisher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/routers/publisher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/book_edition_schemas.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,21 +13,21 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2ptK9gJRhFD7Lw0IrHeRilYCn9D" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "E:/Проекты/book_fund_api"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Проекты/book_fund_api&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

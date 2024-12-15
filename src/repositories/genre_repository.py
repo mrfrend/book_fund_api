@@ -14,9 +14,10 @@ class GenreRepository(BaseRepository[Genre]):
         )
 
     async def get_specific_genres(self, genres: list[str]) -> list[Genre]:
+        genres = [int(genre_id) for genre_id in genres]
         async with self.db_session() as session:
-            query = select(Genre).where(Genre.name.in_(genres))
-            result = await session.execute(query).scalars().all()
+            query = select(Genre).where(Genre.id.in_(genres))
+            result = (await session.execute(query)).scalars().all()
             return result
 
     async def get_books_by_genre_id(self, genre_id: int) -> list[Book]:

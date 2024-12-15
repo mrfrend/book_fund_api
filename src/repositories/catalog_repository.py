@@ -13,7 +13,8 @@ class CatalogRepository(BaseRepository[Catalog]):
         )
 
     async def get_specific_catalogs(self, catalogs: list[str]) -> list[Catalog]:
+        catalogs = [int(catalog_id) for catalog_id in catalogs]
         async with self.db_session() as session:
-            query = select(Catalog).where(Catalog.name.in_(catalogs))
-            result = await session.execute(query).scalars().all()
+            query = select(Catalog).where(Catalog.id.in_(catalogs))
+            result = (await session.execute(query)).scalars().all()
             return result

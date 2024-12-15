@@ -12,7 +12,8 @@ class AuthorRepository(BaseRepository[Author]):
             db_session=async_session_factory,
         )
 
-    async def get_specific_authors(self, authors_id: list[int]):
+    async def get_specific_authors(self, authors_id: list[str]) -> list[Author]:
+        authors_id = [int(author_id) for author_id in authors_id]
         async with self.db_session() as session:
             query = select(Author).where(Author.id.in_(authors_id))
             result = (await session.execute(query)).scalars().all()

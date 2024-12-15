@@ -131,16 +131,9 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     hashed_password: Mapped[str] = mapped_column(String(60), nullable=False)
-
-    # is_user: Mapped[bool] = mapped_column(
-    #     nullable=False, server_default=text("true"), default=True
-    # )
-    # is_admin: Mapped[bool] = mapped_column(
-    #     nullable=False, server_default=text("false"), default=False
-    # )
-    # is_staff: Mapped[bool] = mapped_column(
-    #     nullable=False, server_default=text("false"), default=False
-    # )
+    is_admin: Mapped[bool] = mapped_column(
+        nullable=False, server_default=text("false"), default=False
+    )
 
 
 # class Edition(Base):

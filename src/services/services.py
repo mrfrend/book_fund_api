@@ -1,23 +1,39 @@
 from fastapi import UploadFile
-from database.models import Genre
+from database.models import Book, Genre
 from repositories import *
 from schemas import *
+import asyncio
 from services.base_service import BaseService
+from repositories.genre_repository import GenreRepository
+from repositories.author_repository import AuthorRepository
+from repositories.catalog_repository import CatalogRepository
 
 
 class BookService(BaseService[BookDTO, BookAddDTO, BookUpdateDTO]):
     def __init__(self):
         super().__init__(BookRepository, BookDTO, BookAddDTO, BookUpdateDTO)
 
-    async def create(self, data: BookAddDTO, image: UploadFile):
-        updated_book = await self.repository.create(data, image)
-        book_dto = BookDTO.model_validate(updated_book, from_attributes=True)
-        return book_dto
+    async def create(self, data: BookAddDTO, image: UploadFile) -> BookRelDTO:
+        created_book_id = await self.repository.create(data, image)
+        catalogs, authors, genres = await asyncio.gather(
+            CatalogRepository().get_specific_catalogs(data.catalogs),
+            AuthorRepository().get_specific_authors(data.authors),
+            GenreRepository().get_specific_genres(data.genres),
+        )
+        updated_book = await self.repository.add_entities_to_book(
+            created_book_id, catalogs, authors, genres
+        )
+        print('updated_book', updated_book)
+        return updated_book
 
     async def get_image_book(self, book_id: int) -> tuple[bytes, str]:
         image_content, image_path = await self.repository.get_image_book(book_id)
         return (image_content, image_path)
 
+    async def get(self, book_id: int) -> BookRelDTO:
+        data = await self.repository.get(book_id)
+        result = BookRelDTO.model_validate(data, from_attributes=True)
+        return result
 
     async def get_all(self) -> list[BookRelDTO]:
         data = await self.repository.get_all()
@@ -89,9 +105,6 @@ class PublisherService(BaseService[PublisherDTO, PublisherAddDTO, PublisherAddDT
         )
 
 
-
-
-
 class GenreService(BaseService[GenreDTO, GenreAddDTO, GenreAddDTO]):
     def __init__(self):
         super().__init__(GenreRepository, GenreDTO, GenreAddDTO, GenreAddDTO)
@@ -114,6 +127,7 @@ class GenreService(BaseService[GenreDTO, GenreAddDTO, GenreAddDTO]):
 class CountryService(BaseService[CountryDTO, CountryAddDTO, CountryAddDTO]):
     def __init__(self):
         super().__init__(CountryRepository, CountryDTO, CountryAddDTO, CountryAddDTO)
+
 
 # class EditionService(BaseService[EditionDTO, EditionAddDTO, EditionUpdateDTO]):
 #     def __init__(self):

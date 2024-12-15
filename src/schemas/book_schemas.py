@@ -20,15 +20,18 @@ __all__ = [
 
 
 class BookAddDTO(BaseModel):
-    title: str = Field(max_length=40)
+    title: str = Field(max_length=100)
     year_creation: int = Field(gt=0, le=2024)
     year_published: int = Field(gt=0, le=2024)
     page_amount: int = Field(gt=0)
     quantity: int = Field(gt=0)
     isbn_number: str = Field(max_length=18, default="978-3-16-148410-0")
-    description: str = Field(max_length=500)
+    description: str = Field(max_length=800)
     country_id: int = Field(gt=0)
     publisher_id: int = Field(gt=0)
+    authors: list[str]
+    catalogs: list[str]
+    genres: list[str]
 
     @field_validator("isbn_number")
     def check_isbn_format(cls, value):
@@ -41,13 +44,13 @@ class BookAddDTO(BaseModel):
 
 
 class BookUpdateDTO(BaseModel):
-    title: str | None = Field(max_length=40)
+    title: str | None = Field(max_length=100)
     year_creation: int | None = Field(gt=0, le=2024)
     year_published: int | None = Field(gt=0, le=2024)
     page_amount: int | None = Field(gt=0)
     quantity: int | None = Field(gt=0)
     isbn_number: str | None = Field(max_length=18, default="978-3-16-148410-0")
-    description: str | None = Field(max_length=500)
+    description: str | None = Field(max_length=800)
     country_id: int | None = Field(gt=0)
     publisher_id: int | None = Field(gt=0)
 
@@ -61,7 +64,7 @@ class BookUpdateDTO(BaseModel):
         return value
 
 
-class BookDTO(BookAddDTO):
+class BookDTO(BookUpdateDTO):
     id: int
     img_path: str
 

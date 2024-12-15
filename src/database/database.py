@@ -4,8 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase
 from config import settings
 
-async_engine = create_async_engine(url=settings.db_url, echo=True)
-sync_engine = create_engine(url="sqlite:///book_fund.db", echo=True)
+async_engine = create_async_engine(url=settings.db_url)
+sync_engine = create_engine(url="sqlite:///book_fund.db")
 
 async_session_factory = async_sessionmaker(async_engine)
 

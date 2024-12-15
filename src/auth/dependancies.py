@@ -36,7 +36,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
         payload = decode_jwt(token)
     except InvalidTokenError as e:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail=f"invalid token error: {e}"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Ошибка неправильного токена: {e}"
         )
     user_repository = UserRepository()
     user = await user_repository.find_one_or_none(username=payload["sub"])

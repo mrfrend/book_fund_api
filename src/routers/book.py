@@ -23,16 +23,37 @@ async def get_all_books(book_service: book_dependency) -> list[BookRelDTO]:
 
 
 @router.get("/{book_id}", summary="Получить книгу по id")
-async def get_book(book_id: int, book_service: book_dependency) -> BookDTO | None:
-    book = await book_service.get(id=book_id)
+async def get_book(book_id: int, book_service: book_dependency) -> BookRelDTO | None:
+    book = await book_service.get(book_id)
     if book is None:
         raise HTTPException(status_code=404, detail="Книга не была найдена")
     return book
 
 
-@router.post("/", summary="Добавить книгу", response_model=BookDTO, response_model_exclude={'img_path'})
+@router.post(
+    "/",
+    summary="Добавить книгу",
+    response_model=BookRelDTO,
+    response_model_exclude={"img_path"},
+)
 async def add_book(
-    image: UploadFile, book_service: book_dependency, title: str = Form(max_length=40), year_creation: int = Form(gt=0, le=2024), year_published: int = Form(gt=0, le=2024), page_amount: int = Form(gt=0), quantity: int = Form(gt=0), description: str = Form(max_length=500), country_id: int = Form(gt=0), publisher_id: int = Form(gt=0), staff_user=Depends(get_current_user)
+    image: UploadFile,
+    book_service: book_dependency,
+    title: str = Form(max_length=100),
+    year_creation: int = Form(gt=0, le=2024),
+    year_published: int = Form(gt=0, le=2024),
+    isbn_number: str = Form(
+        max_length=18, regex=r"^97[89]-\d{1,5}-\d{1,7}-\d{1,6}-\d$"
+    ),
+    page_amount: int = Form(gt=0),
+    quantity: int = Form(gt=0),
+    description: str = Form(max_length=800),
+    country_id: int = Form(gt=0),
+    publisher_id: int = Form(gt=0),
+    authors: list[str] = Form(default=[]),
+    genres: list[str] = Form(default=[]),
+    catalogs: list[str] = Form(default=[]),
+    staff_user=Depends(get_current_user),
 ):
     book_model = BookAddDTO(
         image=image,
@@ -44,16 +65,24 @@ async def add_book(
         description=description,
         country_id=country_id,
         publisher_id=publisher_id,
+        authors=authors,
+        genres=genres,
+        catalogs=catalogs,
+        isbn_number=isbn_number,
     )
+    try:
+        book = await book_service.create(book_model, image)
+        return book
+    except Exception as e:
+        print("Такая ошибка", e)
 
-    book = await book_service.create(book_model, image)
-    return book
 
-@router.get('/image/{book_id}', summary='Получить картинку книги')
+@router.get("/image/{book_id}", summary="Получить картинку книги")
 async def get_image_book(book_id: int, book_service: book_dependency):
     image_content, image_path = await book_service.get_image_book(book_id)
-    return Response(content=image_content, media_type=f'image/{image_path.split('.')[-1]}')
-
+    return Response(
+        content=image_content, media_type=f"image/{image_path.split('.')[-1]}"
+    )
 
 
 @router.post(
