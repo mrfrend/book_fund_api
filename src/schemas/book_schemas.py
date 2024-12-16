@@ -44,15 +44,15 @@ class BookAddDTO(BaseModel):
 
 
 class BookUpdateDTO(BaseModel):
-    title: str | None = Field(max_length=100)
-    year_creation: int | None = Field(gt=0, le=2024)
-    year_published: int | None = Field(gt=0, le=2024)
-    page_amount: int | None = Field(gt=0)
-    quantity: int | None = Field(gt=0)
-    isbn_number: str | None = Field(max_length=18, default="978-3-16-148410-0")
-    description: str | None = Field(max_length=800)
-    country_id: int | None = Field(gt=0)
-    publisher_id: int | None = Field(gt=0)
+    title: str | None = Field(max_length=100, default=None)
+    year_creation: int | None = Field(gt=0, le=2024, default=None)
+    year_published: int | None = Field(gt=0, le=2024, default=None)
+    page_amount: int | None = Field(gt=0, default=None)
+    quantity: int | None = Field(gt=0, default=None)
+    isbn_number: str | None = Field(max_length=18, default=None)
+    description: str | None = Field(max_length=800, default=None)
+    country_id: int | None = Field(gt=0, default=None)
+    publisher_id: int | None = Field(gt=0, default=None)
 
     # @field_validator("isbn_number")
     # def check_isbn_format(cls, value):

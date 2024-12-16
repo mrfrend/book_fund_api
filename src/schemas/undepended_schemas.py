@@ -32,8 +32,8 @@ class AuthorAddDTO(BaseModel):
 
 
 class AuthorUpdateDTO(BaseModel):
-    first_name: str | None = Field(max_length=25, default="Иван")
-    last_name: str | None = Field(max_length=50, default="Иванов")
+    first_name: str | None = Field(max_length=25, default=None)
+    last_name: str | None = Field(max_length=50, default=None)
     middle_name: str | None = Field(max_length=50, default=None)
 
 

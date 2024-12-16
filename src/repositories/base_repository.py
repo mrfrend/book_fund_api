@@ -46,7 +46,9 @@ class BaseRepository(Generic[ModelType]):
         async with self.db_session() as session:
             result = await session.get(self.model, id)
             if result:
-                for attr, value in data.model_dump(exclude_unset=True).items():
+                for attr, value in data.model_dump(
+                    exclude_unset=True, exclude_defaults=True
+                ).items():
                     setattr(result, attr, value)
                 await session.commit()
                 await session.refresh(result)

@@ -12,7 +12,9 @@ class CatalogRepository(BaseRepository[Catalog]):
             db_session=async_session_factory,
         )
 
-    async def get_specific_catalogs(self, catalogs: list[str]) -> list[Catalog]:
+    async def get_specific_catalogs(self, catalogs: list[str] | None) -> list[Catalog] | None:
+        if catalogs is None:
+            return None
         catalogs = [int(catalog_id) for catalog_id in catalogs]
         async with self.db_session() as session:
             query = select(Catalog).where(Catalog.id.in_(catalogs))

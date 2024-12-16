@@ -13,7 +13,9 @@ class GenreRepository(BaseRepository[Genre]):
             db_session=async_session_factory,
         )
 
-    async def get_specific_genres(self, genres: list[str]) -> list[Genre]:
+    async def get_specific_genres(self, genres: list[str] | None) -> list[Genre] | None:
+        if genres is None:
+            return None
         genres = [int(genre_id) for genre_id in genres]
         async with self.db_session() as session:
             query = select(Genre).where(Genre.id.in_(genres))

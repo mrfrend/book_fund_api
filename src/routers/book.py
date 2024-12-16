@@ -1,4 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, Path, Form, UploadFile, Response
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    HTTPException,
+    Path,
+    Form,
+    UploadFile,
+    Response,
+)
 from schemas.book_schemas import BookUpdateFrontDTO
 from services import BookService
 from repositories import BookRepository
@@ -148,21 +157,18 @@ async def delete_book(
 async def update_book(
     book_id: int,
     book_service: book_dependency,
-    image: UploadFile | None= None,
     title: str | None = Form(default=None),
-    year_creation: int | None = Form(default=None),
-    year_published: int | None = Form(default=None),
-    page_amount: int | None = Form(default=None),
-    quantity: int | None = Form(default=None),
-    isbn_number: str | None = Form(default=None),
-    description: str | None = Form(default=None),
-    country_id: int | None = Form(default=None),
-    publisher_id: int | None = Form(default=None),
-    authors: list[str] | None = Form(default=None),
-    catalogs: list[str] | None = Form(default=None),
-    genres: list[str] | None = Form(default=None),
+    year_creation: str | None = Form(gt=0, le=2024, default=None),
+    year_published: int | None = Form(gt=0, le=2024, default=None),
+    page_amount: int | None = Form(gt=0, default=None),
+    quantity: int | None = Form(gt=0, default=None),
+    isbn_number: str | None = Form(max_length=18, default=None),
+    description: str | None = Form(max_length=800, default=None),
+    country_id: int | None = Form(gt=0, default=None),
+    publisher_id: int | None = Form(gt=0, default=None),
+    image: UploadFile | None = File(default=None),
     staff_user=Depends(get_current_user),
-) -> BookDTO | None:
+) -> BookRelDTO:
     book_model = BookUpdateFrontDTO(
         title=title,
         year_creation=year_creation,
@@ -173,14 +179,9 @@ async def update_book(
         description=description,
         country_id=country_id,
         publisher_id=publisher_id,
-        authors=authors,
-        catalogs=catalogs,
-        genres=genres,
     )
-    book = await book_service.update(id=book_id, data=book_model)
-    if book is None:
-        raise HTTPException(status_code=404, detail="Книга не была найден")
-    return book
+    updated_book = await book_service.update(id=book_id, data=book_model, image=image)
+    return updated_book
 
 
 # @router.post(

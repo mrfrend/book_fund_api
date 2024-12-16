@@ -31,20 +31,20 @@ class BookRepository(BaseRepository[Book]):
             if image:
                 await self.write_image(image, book)
             for attr, value in data.model_dump(
-                exclude_unset=True, exclude={"authors", "catalogs", "genres"}
+                exclude_unset=True, exclude_defaults=True, exclude={"authors", "catalogs", "genres"}
             ).items():
-                setattr(book, attr, int(value) if value.isdigit() else value)
+                setattr(book, attr, value)
 
-            await session.refresh(book)
             await session.commit()
+            await session.refresh(book)
             return book
 
     async def update_entities_to_book(
         self,
         id: int,
-        catalogs: list[Catalog],
-        authors: list[Author],
-        genres: list[Genre],
+        catalogs: list[Catalog] | None,
+        authors: list[Author] | None,
+        genres: list[Genre] | None,
     ) -> BookRelDTO:
         async with self.db_session() as session:
             query = (
