@@ -22,7 +22,7 @@ async def register_user(user_data: UserAddDTO):
 
 
 @router.post("/login", summary="Войти в систему", response_model=TokenInfo)
-def auth_user_jwt(response: Response,user: UserAddDTO = Depends(validate_user)):
+def auth_user_jwt(response: Response,user: User = Depends(validate_user)):
     jwt_payload = {"sub": user.username}
     token = encode_jwt(jwt_payload)
     response.headers['Authorization'] = f"Bearer {token}"

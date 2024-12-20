@@ -92,6 +92,7 @@ class BookRelDTO(BookDTO):
     authors: list["AuthorDTO"]
     catalogs: list["CatalogDTO"]
     country: "CountryDTO"
+    publisher: "PublisherDTO"
 
 
 # class EditionAddDTO(BaseModel):

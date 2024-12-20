@@ -2,12 +2,13 @@ from typing import Union
 from fastapi import UploadFile
 from schemas.book_schemas import BookRelDTO, BookUpdateFrontDTO
 from schemas.undepended_schemas import *
-from sqlalchemy import select
+from sqlalchemy import and_, select, delete
 from sqlalchemy.orm import selectinload, joinedload
-from database.models import Book, Genre, Author, Catalog
+from database.models import Book, DesiredBook, Genre, Author, Catalog, ViewBook
 from schemas import BookAddDTO
 from database.database import async_session_factory
 from .base_repository import BaseRepository
+from datetime import date
 
 
 class BookRepository(BaseRepository[Book]):
@@ -31,7 +32,9 @@ class BookRepository(BaseRepository[Book]):
             if image:
                 await self.write_image(image, book)
             for attr, value in data.model_dump(
-                exclude_unset=True, exclude_defaults=True, exclude={"authors", "catalogs", "genres"}
+                exclude_unset=True,
+                exclude_defaults=True,
+                exclude={"authors", "catalogs", "genres"},
             ).items():
                 setattr(book, attr, value)
 
@@ -145,6 +148,21 @@ class BookRepository(BaseRepository[Book]):
             result = execution.unique().scalar()
             return result
 
+    async def get_specific_books(self, book_ids: list[int]) -> list[Book]:
+        async with self.db_session() as session:
+            query = (
+                select(Book)
+                .options(selectinload(Book.genres))
+                .options(selectinload(Book.authors))
+                .options(selectinload(Book.catalogs))
+                .options(joinedload(Book.publisher))
+                .options(joinedload(Book.country))
+                .where(Book.id.in_(book_ids))
+            )
+            execution = await session.execute(query)
+            result = execution.unique().scalars().all()
+            return result
+
     async def add_related_entities(
         self,
         book_id: int,
@@ -238,3 +256,43 @@ class BookRepository(BaseRepository[Book]):
         #     execution = session.execute(query)
         #     result = execution.unique().scalar()
         #     return result
+
+    async def add_to_desired_book(self, book_id: int, user_id: int):
+        async with self.db_session() as session:
+            new_writing = DesiredBook(user_id=user_id, book_id=book_id)
+            session.add(new_writing)
+            await session.commit()
+
+    async def remove_from_desired_book(self, book_id: int, user_id: int):
+        async with self.db_session() as session:
+            stmt = delete(DesiredBook).where(
+                and_(DesiredBook.book_id == book_id, DesiredBook.user_id == user_id)
+            )
+            await session.execute(stmt)
+            await session.commit()
+
+    async def get_desired_books_id(self, user_id: int):
+        async with self.db_session() as session:
+            query = select(DesiredBook.id).where(DesiredBook.user_id == user_id)
+            execution = await session.execute(query)
+            res = execution.scalars().all()
+            return res
+    
+    async def update_views_book(self, book_id: int):
+        async with self.db_session() as session:
+            query = select(ViewBook).where(and_(ViewBook.book_id == book_id, ViewBook.date == date.today()))
+            res: ViewBook | None = (await session.execute(query)).scalar_one_or_none()
+            if res is None:
+                new_view = ViewBook(book_id=book_id)
+                session.add(new_view)
+            else:
+                res.count_view += 1
+            await session.commit()
+
+    
+    async def get_views_books(self):
+        async with self.db_session() as session:
+            query = select(ViewBook)
+            execution = await session.execute(query)
+            res = execution.scalars().all()
+            return res

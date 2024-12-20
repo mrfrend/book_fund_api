@@ -85,15 +85,13 @@ class BookService(BaseService[BookDTO, BookAddDTO, BookUpdateDTO]):
         )
         return book_catalog_dto
 
-    # async def add_editions(self, book_id: int, editions_id: list[str]):
-    #     editions_models = await EditionRepository().get_specific_editions(editions_id)
-    #     updated_book = await self.repository.add_related_entities(
-    #         book_id, editions_models, "editions"
-    #     )
-    #     edition_rel_dto = EditionRelDTO.model_validate(
-    #         updated_book, from_attributes=True
-    #     )
-    #     return edition_rel_dto
+    async def get_desired_books(self, user_id: int) -> list["BookRelDTO"]:
+        books_id = await self.repository.get_desired_books_id(user_id)
+        books = await self.repository.get_specific_books(books_id)
+        result = [
+            BookRelDTO.model_validate(book, from_attributes=True) for book in books
+        ]
+        return result
 
 
 class CatalogService(BaseService[CatalogDTO, CatalogAddDTO, CatalogAddDTO]):

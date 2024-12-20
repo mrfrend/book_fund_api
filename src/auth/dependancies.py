@@ -32,6 +32,23 @@ async def validate_user(username: str = Form(), password: str = Form()):
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
+    print('Вызвана зависимость обычного пользователя')
+    try:
+        payload = decode_jwt(token)
+    except InvalidTokenError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Ошибка неправильного токена: {e}"
+        )
+    user_repository = UserRepository()
+    user = await user_repository.find_one_or_none(username=payload["sub"])
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Пользователь не найден"
+        )
+    return user
+
+async def get_current_user2(token: str = Depends(oauth2_scheme)) -> User:
+    print('Вызвана зависимость обычного пользователя')
     try:
         payload = decode_jwt(token)
     except InvalidTokenError as e:
@@ -47,6 +64,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     return user
 
 def get_admin_user(user: User = Depends(get_current_user)):
+    print('Вызвана зависимость для админа')
     if not user.is_admin:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Пользователь не является админом."

@@ -7,7 +7,9 @@ from fastapi import (
     Form,
     UploadFile,
     Response,
+    status,
 )
+from database.models import User
 from schemas.book_schemas import BookUpdateFrontDTO
 from services import BookService
 from repositories import BookRepository
@@ -167,6 +169,9 @@ async def update_book(
     country_id: int | None = Form(gt=0, default=None),
     publisher_id: int | None = Form(gt=0, default=None),
     image: UploadFile | None = File(default=None),
+    authors: list[str] | None = Form(default=None),
+    genres: list[str] | None = Form(default=None),
+    catalogs: list[str] | None = Form(default=None),
     staff_user=Depends(get_current_user),
 ) -> BookRelDTO:
     book_model = BookUpdateFrontDTO(
@@ -179,11 +184,18 @@ async def update_book(
         description=description,
         country_id=country_id,
         publisher_id=publisher_id,
+        authors=authors,
+        genres=genres,
+        catalogs=catalogs,
     )
     updated_book = await book_service.update(id=book_id, data=book_model, image=image)
     return updated_book
 
 
+@router.post("/add/view/{book_id}", summary="Обновить или добавить просмотры книги")
+async def add_update_views(book_id: int):
+    book_repo = BookRepository()
+    await book_repo.update_views_book(book_id)
 # @router.post(
 #     "/edition/{book_id}",
 #     summary="Добавить книгу в издание/издания",

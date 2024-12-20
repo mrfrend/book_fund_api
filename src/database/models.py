@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, CheckConstraint, ForeignKey, text
+from sqlalchemy import Date, String, Integer, CheckConstraint, ForeignKey, text
 from database.database import Base
+import datetime
 
 __all__ = [
     "Book",
@@ -81,6 +82,10 @@ class Book(Base):
     genres: Mapped[list["Genre"]] = relationship(
         back_populates="books", uselist=True, secondary="book_genre"
     )
+    users: Mapped[list["User"]] = relationship(
+        back_populates="desired_books", uselist=True, secondary="desired_book"
+    )
+
     img_path: Mapped[str] = mapped_column(String(100), nullable=True)
 
     __table_args__ = (
@@ -133,6 +138,30 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String(60), nullable=False)
     is_admin: Mapped[bool] = mapped_column(
         nullable=False, server_default=text("false"), default=False
+    )
+    first_name: Mapped[str] = mapped_column(String(25), nullable=True)
+    last_name: Mapped[str] = mapped_column(String(50), nullable=True)
+    desired_books: Mapped[list["Book"]] = relationship(
+        back_populates="users", uselist=True, secondary="desired_book"
+    )
+
+
+class DesiredBook(Base):
+    __tablename__ = "desired_book"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    book_id: Mapped[int] = mapped_column(ForeignKey("book.id"), nullable=False)
+
+
+class ViewBook(Base):
+    __tablename__ = "view_book"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    book_id: Mapped[int] = mapped_column(ForeignKey("book.id"), nullable=False)
+    count_view: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("1")
+    )
+    date: Mapped[datetime.date] = mapped_column(
+        Date, nullable=False, server_default=text("date('now')")
     )
 
 
